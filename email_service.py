@@ -11,6 +11,29 @@ def send_appointment_confirmation_email(recipient, appointment_details):
         appointment_details (dict): Dictionary containing appointment details
     """
     try:
+        # Get priority-specific information
+        priority_text = ""
+        if 'priority' in appointment_details:
+            if appointment_details['priority'].lower() == 'urgent':
+                priority_text = "\nThis appointment has been marked as URGENT. Special priority will be given."
+            elif appointment_details['priority'].lower() == 'emergency':
+                priority_text = "\nThis appointment has been marked as EMERGENCY. Please contact us immediately if your condition worsens before the appointment date."
+        
+        # Get additional notes
+        notes_text = ""
+        if 'notes' in appointment_details and appointment_details['notes']:
+            notes_text = f"\nAdditional Notes: {appointment_details['notes']}"
+        
+        # Get follow-up information
+        follow_up_text = ""
+        if 'follow_up' in appointment_details and appointment_details['follow_up'] == 'Yes':
+            follow_up_text = "\nThis is scheduled as a follow-up appointment."
+        
+        # Get medical records information
+        records_text = ""
+        if 'medical_records' in appointment_details and appointment_details['medical_records'] == 'Yes':
+            records_text = "\nYou have indicated that you will bring your medical records to this appointment."
+
         subject = "Appointment Confirmation - Smart Healthcare Ecosystem"
         body = f"""
         Dear {appointment_details['patient_name']},
@@ -20,16 +43,17 @@ def send_appointment_confirmation_email(recipient, appointment_details):
         Appointment Details:
         Date: {appointment_details['date']}
         Time: {appointment_details['time']}
-        Reason: {appointment_details['reason']}
+        Reason: {appointment_details['reason']}{priority_text}{follow_up_text}{notes_text}{records_text}
         
         Location: Smart Healthcare Center
         
-        What to bring to your appointment:
-        - Any previous medical records related to your condition
-        - List of current medications
-        - Your ID and insurance card (if applicable)
+        Preparation Instructions:
+        - Arrive 15 minutes early to complete any necessary paperwork
+        - Bring a list of current medications and dosages
+        - Bring your insurance card and ID
+        - Fast for 8 hours prior to appointment if lab work might be needed
+        - Wear comfortable clothing that allows easy examination
         
-        Please arrive 15 minutes before your scheduled appointment time.
         If you need to reschedule or cancel, please log in to your account or contact us.
         
         We've added this appointment to your personal health calendar in your user dashboard.

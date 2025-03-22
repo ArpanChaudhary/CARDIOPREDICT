@@ -170,26 +170,22 @@ def get_user_predictions(user_id):
 def create_appointment():
     data = request.get_json()
     
-    # Create new appointment with payment info
+    # Create new appointment without payment info
     appointment = Appointment(
         user_id=data['userId'],
         doctor_id=data['doctorId'],
         appointment_date=datetime.strptime(data['appointmentDate'], '%Y-%m-%d').date(),
         appointment_time=data['appointmentTime'],
         reason=data.get('reason', ''),
-        status='confirmed',
-        payment_method=data.get('paymentMethod'),
-        payment_amount=data.get('paymentAmount', 0.0),
-        payment_status=data.get('paymentStatus', 'unpaid')
+        status=data.get('status', 'confirmed'),
+        notes=data.get('notes', '')
     )
     
-    # Set payment date if provided
-    if data.get('paymentDate'):
-        try:
-            appointment.payment_date = datetime.fromisoformat(data.get('paymentDate').replace('Z', '+00:00'))
-        except ValueError:
-            # If ISO format fails, try simple date parsing
-            appointment.payment_date = datetime.strptime(data.get('paymentDate'), '%Y-%m-%d')
+    # Set payment fields to default values since we're removing payment functionality
+    appointment.payment_status = 'not_applicable'
+    appointment.payment_method = None
+    appointment.payment_amount = 0.0
+    appointment.payment_date = None
     
     db.session.add(appointment)
     
@@ -201,7 +197,12 @@ def create_appointment():
         doctor_model = Doctor.query.get(data['doctorId'])
         doctor_user = User.query.get(doctor_model.user_id)
         
-        # Prepare appointment details for email
+        # Extract priority and other new fields if present
+        priority = data.get('priority', 'regular')
+        follow_up = data.get('followUp', False)
+        medical_records = data.get('medicalRecords', False)
+        
+        # Prepare appointment details for email with enhanced information
         appointment_details = {
             'patient_name': user.full_name,
             'doctor_name': doctor_user.full_name,
@@ -209,9 +210,10 @@ def create_appointment():
             'date': appointment.appointment_date.strftime('%A, %B %d, %Y'),
             'time': appointment.appointment_time,
             'reason': appointment.reason,
-            'payment_method': appointment.payment_method,
-            'payment_amount': f"${appointment.payment_amount:.2f}",
-            'payment_status': appointment.payment_status.title()
+            'notes': appointment.notes,
+            'priority': priority.title(),
+            'follow_up': 'Yes' if follow_up else 'No',
+            'medical_records': 'Yes' if medical_records else 'No'
         }
         
         # Use the email service function
