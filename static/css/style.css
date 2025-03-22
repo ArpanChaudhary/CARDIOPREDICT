@@ -1,0 +1,291 @@
+/* CardioHealth Custom CSS */
+
+/* ---- Variables ---- */
+:root {
+  --primary-color: var(--bs-info);
+  --secondary-color: var(--bs-teal);
+  --accent-color: var(--bs-pink);
+  --success-color: var(--bs-success);
+  --warning-color: var(--bs-warning);
+  --danger-color: var(--bs-danger);
+  --light-bg: var(--bs-dark);
+  --dark-bg: var(--bs-black);
+  --card-bg: var(--bs-dark);
+  --text-color: var(--bs-light);
+  --text-muted: var(--bs-gray-600);
+  --border-radius: 8px;
+  --box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+  --transition: all 0.3s ease;
+}
+
+/* ---- General Styles ---- */
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background-color: var(--dark-bg);
+  color: var(--text-color);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.content-wrapper {
+  flex: 1;
+  padding: 20px 0;
+}
+
+.page-container {
+  min-height: calc(100vh - 120px);
+}
+
+/* ---- Navbar Styles ---- */
+.navbar-brand {
+  font-weight: 700;
+  font-size: 1.5rem;
+}
+
+.navbar-brand i {
+  color: var(--accent-color);
+  margin-right: 8px;
+}
+
+.nav-link {
+  font-weight: 500;
+  transition: var(--transition);
+}
+
+.nav-link:hover {
+  color: var(--primary-color);
+}
+
+.navbar-toggler {
+  border: none;
+}
+
+/* ---- Card Styles ---- */
+.card {
+  border-radius: var(--border-radius);
+  box-shadow: var(--box-shadow);
+  transition: var(--transition);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  overflow: hidden;
+}
+
+.card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 15px rgba(0, 0, 0, 0.4);
+}
+
+.card-header {
+  font-weight: 600;
+  background-color: rgba(0, 0, 0, 0.2);
+}
+
+.card-title {
+  font-weight: 700;
+  color: var(--primary-color);
+}
+
+/* ---- Button Styles ---- */
+.btn {
+  border-radius: var(--border-radius);
+  font-weight: 500;
+  transition: var(--transition);
+  text-transform: capitalize;
+}
+
+.btn-primary {
+  background-color: var(--primary-color);
+  border-color: var(--primary-color);
+}
+
+.btn-primary:hover {
+  background-color: var(--bs-info-darker);
+  border-color: var(--bs-info-darker);
+}
+
+.btn-accent {
+  background-color: var(--accent-color);
+  border-color: var(--accent-color);
+  color: white;
+}
+
+.btn-accent:hover {
+  background-color: var(--bs-pink-darker);
+  border-color: var(--bs-pink-darker);
+}
+
+/* ---- Form Styles ---- */
+.form-control, .form-select {
+  border-radius: var(--border-radius);
+  padding: 10px 15px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background-color: var(--bs-dark);
+  color: var(--text-color);
+}
+
+.form-control:focus, .form-select:focus {
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 0.2rem rgba(13, 202, 240, 0.25);
+}
+
+.form-label {
+  font-weight: 500;
+  margin-bottom: 0.5rem;
+}
+
+/* ---- Hero Section ---- */
+.hero {
+  padding: 100px 0;
+  background: linear-gradient(135deg, var(--dark-bg) 0%, var(--card-bg) 100%);
+}
+
+.hero h1 {
+  font-weight: 700;
+  margin-bottom: 1.5rem;
+  font-size: 3rem;
+}
+
+.hero p {
+  font-size: 1.2rem;
+  opacity: 0.9;
+  margin-bottom: 2rem;
+}
+
+/* ---- Feature Card ---- */
+.feature-card {
+  border-radius: var(--border-radius);
+  padding: 25px;
+  text-align: center;
+  margin-bottom: 30px;
+  background-color: var(--card-bg);
+  box-shadow: var(--box-shadow);
+  transition: var(--transition);
+}
+
+.feature-card:hover {
+  transform: translateY(-5px);
+}
+
+.feature-icon {
+  font-size: 40px;
+  margin-bottom: 20px;
+  color: var(--primary-color);
+}
+
+/* ---- Dashboard ---- */
+.dashboard-card {
+  margin-bottom: 24px;
+}
+
+.stat-card {
+  text-align: center;
+  padding: 20px;
+}
+
+.stat-card .stat-value {
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--primary-color);
+}
+
+.stat-card .stat-label {
+  font-size: 1rem;
+  color: var(--text-muted);
+}
+
+/* ---- Charts ---- */
+.chart-container {
+  position: relative;
+  height: 300px;
+  margin-bottom: 24px;
+}
+
+/* ---- Tables ---- */
+.table {
+  margin-bottom: 0;
+  color: var(--text-color);
+}
+
+.table th {
+  font-weight: 600;
+  border-color: rgba(255, 255, 255, 0.1);
+}
+
+.table td {
+  vertical-align: middle;
+  border-color: rgba(255, 255, 255, 0.1);
+}
+
+/* ---- Status Badges ---- */
+.status-badge {
+  padding: 0.25rem 0.75rem;
+  border-radius: 50px;
+  font-size: 0.8rem;
+  font-weight: 500;
+  display: inline-block;
+}
+
+.status-badge.pending {
+  background-color: var(--warning-color);
+  color: black;
+}
+
+.status-badge.confirmed {
+  background-color: var(--primary-color);
+  color: white;
+}
+
+.status-badge.completed {
+  background-color: var(--success-color);
+  color: white;
+}
+
+.status-badge.cancelled {
+  background-color: var(--danger-color);
+  color: white;
+}
+
+/* ---- Footer ---- */
+footer {
+  background-color: var(--dark-bg);
+  padding: 20px 0;
+  margin-top: auto;
+}
+
+footer p {
+  margin-bottom: 0;
+}
+
+.social-icons a {
+  color: var(--text-color);
+  margin-left: 15px;
+  font-size: 1.2rem;
+  transition: var(--transition);
+}
+
+.social-icons a:hover {
+  color: var(--primary-color);
+}
+
+/* ---- Media Queries ---- */
+@media (max-width: 768px) {
+  .hero {
+    padding: 60px 0;
+  }
+  
+  .hero h1 {
+    font-size: 2.2rem;
+  }
+  
+  .hero p {
+    font-size: 1rem;
+  }
+  
+  .feature-card {
+    padding: 20px;
+  }
+  
+  .stat-card .stat-value {
+    font-size: 1.5rem;
+  }
+}

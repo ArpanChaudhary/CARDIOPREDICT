@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CardioHealth - Cardio Disease Prediction & Appointment System</title>
+  <!-- Bootstrap CSS (Replit-themed) -->
+  <link rel="stylesheet" href="https://cdn.replit.com/agent/bootstrap-agent-dark-theme.min.css">
+  <!-- Font Awesome for icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <!-- Custom CSS -->
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+  <div id="root"></div>
+
+  <!-- React and ReactDOM -->
+  <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+  <!-- Babel for JSX -->
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  <!-- Axios for API calls -->
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+  <!-- Chart.js for visualizations -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <!-- Bootstrap JS -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+  <!-- React Components -->
+  <script type="text/babel" src="{{ url_for('static', filename='js/components/Navbar.js') }}"></script>
+  <script type="text/babel" src="{{ url_for('static', filename='js/components/Footer.js') }}"></script>
+  <script type="text/babel" src="{{ url_for('static', filename='js/components/Landing.js') }}"></script>
+  <script type="text/babel" src="{{ url_for('static', filename='js/components/Auth.js') }}"></script>
+  <script type="text/babel" src="{{ url_for('static', filename='js/components/UserDashboard.js') }}"></script>
+  <script type="text/babel" src="{{ url_for('static', filename='js/components/DoctorDashboard.js') }}"></script>
+  <script type="text/babel" src="{{ url_for('static', filename='js/components/PredictionForm.js') }}"></script>
+  <script type="text/babel" src="{{ url_for('static', filename='js/components/AppointmentBooking.js') }}"></script>
+  <script type="text/babel" src="{{ url_for('static', filename='js/components/PatientHistory.js') }}"></script>
+  
+  <!-- Main App -->
+  <script type="text/babel" src="{{ url_for('static', filename='js/app.js') }}"></script>
+</body>
+</html>
