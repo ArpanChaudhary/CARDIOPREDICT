@@ -106,6 +106,126 @@ const PredictionForm = ({ user, navigateTo }) => {
     return 'text-danger';
   };
   
+  // State for prediction types
+  const [predictionType, setPredictionType] = React.useState('ai');
+  
+  // Get Clinical Symptoms Risk
+  const getClinicalSymptomsRisk = () => {
+    // Count the number of symptoms present
+    const symptomCount = [
+      formData.chestPain,
+      formData.shortnessOfBreath,
+      formData.fatigue,
+      formData.palpitations,
+      formData.dizziness,
+      formData.swelling,
+      formData.nausea,
+      formData.coldSweats,
+      formData.painJawNeckBack,
+      formData.leftArmPain
+    ].filter(Boolean).length;
+    
+    // Calculate risk based on symptom count
+    if (symptomCount >= 5) return { risk: 'High', probability: 0.85, label: true };
+    if (symptomCount >= 3) return { risk: 'Moderate', probability: 0.60, label: false };
+    if (symptomCount >= 1) return { risk: 'Low', probability: 0.30, label: false };
+    return { risk: 'Very Low', probability: 0.10, label: false };
+  };
+  
+  // Get Physiological Indicators Risk
+  const getPhysiologicalRisk = () => {
+    let riskFactors = 0;
+    
+    // Check blood pressure (hypertension)
+    if (formData.systolicBp > 140 || formData.diastolicBp > 90) riskFactors++;
+    
+    // Check cholesterol
+    if (formData.cholesterol > 1) riskFactors++;
+    
+    // Check glucose
+    if (formData.glucose > 1) riskFactors++;
+    
+    // Check heart rate (if provided)
+    if (formData.heartRate && (formData.heartRate < 60 || formData.heartRate > 100)) riskFactors++;
+    
+    // Check BMI
+    const bmi = calculateBMI();
+    if (bmi !== '–' && parseFloat(bmi) > 25) riskFactors++;
+    
+    // Calculate risk based on physiological factors
+    if (riskFactors >= 4) return { risk: 'High', probability: 0.85, label: true };
+    if (riskFactors >= 2) return { risk: 'Moderate', probability: 0.55, label: false };
+    if (riskFactors >= 1) return { risk: 'Low', probability: 0.25, label: false };
+    return { risk: 'Very Low', probability: 0.05, label: false };
+  };
+  
+  // Get Lifestyle Risk
+  const getLifestyleRisk = () => {
+    let riskFactors = 0;
+    
+    // Check smoking
+    if (formData.smoking) riskFactors += 2; // Higher weight for smoking
+    
+    // Check alcohol
+    if (formData.alcohol) riskFactors++;
+    
+    // Check physical activity (inactivity is a risk)
+    if (!formData.physicalActivity) riskFactors++;
+    
+    // Check diet
+    if (formData.highSaltDiet) riskFactors++;
+    if (formData.highFatDiet) riskFactors++;
+    
+    // Check stress level
+    if (formData.stressLevel && parseInt(formData.stressLevel) > 7) riskFactors++;
+    
+    // Calculate risk based on lifestyle factors
+    if (riskFactors >= 4) return { risk: 'High', probability: 0.80, label: true };
+    if (riskFactors >= 2) return { risk: 'Moderate', probability: 0.50, label: false };
+    if (riskFactors >= 1) return { risk: 'Low', probability: 0.20, label: false };
+    return { risk: 'Very Low', probability: 0.10, label: false };
+  };
+  
+  // Get Genetic and Family History Risk
+  const getGeneticRisk = () => {
+    let riskFactors = 0;
+    
+    // Check family history
+    if (formData.familyHistory) riskFactors += 2; // Higher weight for family history
+    
+    // Check genetic disorders
+    if (formData.geneticDisorders) riskFactors += 2;
+    
+    // Check previous heart problems
+    if (formData.previousHeartProblems) riskFactors += 3; // Highest weight for previous problems
+    
+    // Calculate risk based on genetic factors
+    if (riskFactors >= 3) return { risk: 'High', probability: 0.90, label: true };
+    if (riskFactors >= 2) return { risk: 'Moderate', probability: 0.60, label: false };
+    if (riskFactors >= 1) return { risk: 'Low', probability: 0.30, label: false };
+    return { risk: 'Very Low', probability: 0.05, label: false };
+  };
+  
+  // Get Additional Risk Conditions
+  const getAdditionalRiskConditions = () => {
+    let riskFactors = 0;
+    
+    // Check each condition
+    if (formData.diabetes) riskFactors += 2;
+    if (formData.hypertension) riskFactors += 2;
+    if (formData.kidneyDisease) riskFactors++;
+    if (formData.thyroidDisorders) riskFactors++;
+    if (formData.anemia) riskFactors++;
+    if (formData.autoimmune) riskFactors++;
+    if (formData.metabolicSyndrome) riskFactors += 2;
+    
+    // Calculate risk based on additional conditions
+    if (riskFactors >= 4) return { risk: 'High', probability: 0.85, label: true };
+    if (riskFactors >= 2) return { risk: 'Moderate', probability: 0.55, label: false };
+    if (riskFactors >= 1) return { risk: 'Low', probability: 0.25, label: false };
+    return { risk: 'Very Low', probability: 0.05, label: false };
+  };
+  
   // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -121,13 +241,61 @@ const PredictionForm = ({ user, navigateTo }) => {
     setError(null);
     
     try {
-      const response = await axios.post('/api/predict', formData);
-      
-      setPredictionResult(response.data.prediction);
-      
-      // Show book appointment button if high risk
-      if (response.data.prediction.prediction_label) {
-        setShowBookAppointment(true);
+      // If using AI prediction, call the API
+      if (predictionType === 'ai') {
+        const response = await axios.post('/api/predict', formData);
+        setPredictionResult(response.data.prediction);
+        
+        // Show book appointment button if high risk
+        if (response.data.prediction.prediction_label) {
+          setShowBookAppointment(true);
+        }
+      } 
+      // Otherwise use the appropriate local prediction function
+      else {
+        let result = {};
+        
+        switch(predictionType) {
+          case 'clinical':
+            result = getClinicalSymptomsRisk();
+            break;
+          case 'physiological':
+            result = getPhysiologicalRisk();
+            break;
+          case 'lifestyle':
+            result = getLifestyleRisk();
+            break;
+          case 'genetic':
+            result = getGeneticRisk();
+            break;
+          case 'additional':
+            result = getAdditionalRiskConditions();
+            break;
+          default:
+            // Should never reach here
+            setError('Invalid prediction type selected');
+            setLoading(false);
+            return;
+        }
+        
+        // Set prediction result in appropriate format
+        setPredictionResult({
+          prediction_result: result.probability,
+          prediction_label: result.label,
+          risk_level: result.risk,
+          // Add other required fields
+          id: null,
+          user_id: user.id,
+          age: formData.age,
+          gender: formData.gender,
+          created_at: new Date().toISOString(),
+          prediction_type: predictionType
+        });
+        
+        // Show book appointment button if high risk
+        if (result.label) {
+          setShowBookAppointment(true);
+        }
       }
     } catch (err) {
       console.error('Error submitting prediction form:', err);

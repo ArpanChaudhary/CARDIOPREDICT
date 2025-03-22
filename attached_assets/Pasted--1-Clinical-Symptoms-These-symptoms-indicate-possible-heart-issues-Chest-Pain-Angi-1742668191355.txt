@@ -1,0 +1,74 @@
+### **1. Clinical Symptoms**  
+These symptoms indicate possible heart issues:
+- **Chest Pain (Angina)** – Discomfort or pain in the chest, pressure, squeezing, or fullness.
+- **Shortness of Breath (Dyspnea)** – Difficulty in breathing, especially during exertion or rest.
+- **Fatigue** – Persistent tiredness or weakness.
+- **Palpitations** – Irregular heartbeat or a feeling of rapid, fluttering, or pounding heart.
+- **Dizziness or Lightheadedness** – Feeling faint or unsteady.
+- **Swelling (Edema)** – Swelling in legs, feet, ankles, or abdomen due to fluid retention.
+- **Nausea or Vomiting** – Especially in women, it can be a sign of heart disease.
+- **Cold Sweats** – Unexplained sweating, especially at night.
+- **Pain in Jaw, Neck, or Back** – Common in women experiencing heart disease.
+- **Left Arm Pain** – Radiating pain from the chest to the left arm.
+
+---
+
+### **2. Physiological and Medical Indicators**
+These measurable health parameters help in cardiovascular disease prediction:
+- **Blood Pressure (BP)**
+  - High systolic BP (above 140 mmHg)
+  - High diastolic BP (above 90 mmHg)
+- **Cholesterol Levels**  
+  - High LDL (bad cholesterol)  
+  - Low HDL (good cholesterol)  
+  - High total cholesterol  
+- **Glucose Levels**  
+  - Fasting blood sugar (≥126 mg/dL)  
+  - HbA1c (≥6.5%) – Indicator of diabetes risk  
+- **Heart Rate (Pulse Rate)**
+  - Normal: 60-100 bpm  
+  - Tachycardia (above 100 bpm)  
+  - Bradycardia (below 60 bpm)  
+- **Body Mass Index (BMI)**
+  - Overweight (BMI ≥25)
+  - Obese (BMI ≥30)  
+- **Waist-to-Hip Ratio**  
+  - High ratio indicates obesity-related cardiovascular risk.  
+- **Triglyceride Levels**  
+  - High triglycerides increase heart disease risk.  
+- **C-Reactive Protein (CRP)**
+  - A marker of inflammation linked to heart disease.
+
+---
+
+### **3. Lifestyle and Behavioral Risk Factors**
+These factors increase the risk of cardiovascular disease:
+- **Smoking** – Active and passive smoking increase heart disease risk.
+- **Alcohol Consumption** – Excessive alcohol can raise blood pressure.
+- **Physical Inactivity** – Lack of exercise increases heart risk.
+- **Dietary Habits**  
+  - High salt intake  
+  - High saturated/trans fats  
+  - Low fiber and vegetable intake  
+- **Sleep Patterns**  
+  - Less than 6 hours or poor-quality sleep.
+- **Stress and Anxiety** – Psychological stress can contribute to hypertension.
+- **Work Hours Per Week** – Prolonged work stress may impact cardiovascular health.
+
+---
+
+### **4. Genetic and Family History**
+- **Family History of Cardiovascular Disease** – If parents or siblings have had heart issues.
+- **Genetic Disorders** – Conditions like familial hypercholesterolemia.
+- **History of Stroke or Heart Attack** – Previous cardiovascular events increase risk.
+
+---
+
+### **5. Additional Risk Conditions**
+- **Diabetes (Type 1 and Type 2)** – Increased sugar levels damage arteries.
+- **Hypertension (High Blood Pressure)** – Persistent high BP can damage arteries.
+- **Chronic Kidney Disease** – Poor kidney function is linked to heart disease.
+- **Thyroid Disorders** – Hypothyroidism can increase cholesterol levels.
+- **Anemia** – Insufficient oxygen supply affects heart function.
+- **Autoimmune Disorders (e.g., Lupus, Rheumatoid Arthritis)** – Inflammation affects blood vessels.
+- **Metabolic Syndrome** – A combination of obesity, high BP, and high sugar levels.

@@ -216,9 +216,19 @@ def create_appointment():
             'medical_records': 'Yes' if medical_records else 'No'
         }
         
-        # Use the email service function
-        from email_service import send_appointment_confirmation_email
-        send_appointment_confirmation_email(user.email, appointment_details)
+        # Use the email service function with improved logging
+        try:
+            logging.info(f"Attempting to send confirmation email to {user.email}")
+            from email_service import send_appointment_confirmation_email
+            email_sent = send_appointment_confirmation_email(user.email, appointment_details)
+            
+            if email_sent:
+                logging.info(f"Email sent successfully to {user.email}")
+            else:
+                logging.error(f"Email failed to send to {user.email}, but appointment was created")
+        except Exception as email_error:
+            logging.error(f"Exception when sending email: {str(email_error)}")
+            # Don't fail the appointment creation if email fails
         
         return jsonify({
             'message': 'Appointment created successfully',
