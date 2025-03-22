@@ -7,8 +7,10 @@ const AppointmentBooking = ({ user, navigateTo }) => {
   const [selectedDate, setSelectedDate] = React.useState('');
   const [selectedTime, setSelectedTime] = React.useState('');
   const [reason, setReason] = React.useState('');
-  const [paymentMethod, setPaymentMethod] = React.useState('');
-  const [paymentAmount, setPaymentAmount] = React.useState(0);
+  const [symptoms, setSymptoms] = React.useState([]);
+  const [priority, setPriority] = React.useState('regular');
+  const [followUp, setFollowUp] = React.useState(false);
+  const [medicalRecords, setMedicalRecords] = React.useState(false);
   const [showChatbot, setShowChatbot] = React.useState(false);
   const [loading, setLoading] = React.useState(true);
   const [submitting, setSubmitting] = React.useState(false);
@@ -31,22 +33,6 @@ const AppointmentBooking = ({ user, navigateTo }) => {
       setError('Failed to load doctors. Please try again later.');
     } finally {
       setLoading(false);
-    }
-  };
-  
-  // Handle doctor selection
-  const handleDoctorSelect = (doctorId) => {
-    const doctor = doctors.find(d => d.id === parseInt(doctorId));
-    setSelectedDoctor(doctor);
-    
-    if (doctor) {
-      setAvailableDays(doctor.available_days);
-      setAvailableHours(doctor.available_hours);
-      setSelectedDate('');
-      setSelectedTime('');
-    } else {
-      setAvailableDays([]);
-      setAvailableHours([]);
     }
   };
   
@@ -107,27 +93,19 @@ const AppointmentBooking = ({ user, navigateTo }) => {
       setAvailableHours(doctor.available_hours);
       setSelectedDate('');
       setSelectedTime('');
-      
-      // Set default payment amount based on doctor's experience
-      const experienceYears = parseInt(doctor.experience_years) || 0;
-      let basePrice = 50;
-      
-      if (experienceYears >= 10) {
-        basePrice = 100;
-      } else if (experienceYears >= 5) {
-        basePrice = 75;
-      }
-      
-      setPaymentAmount(basePrice);
     } else {
       setAvailableDays([]);
       setAvailableHours([]);
     }
   };
 
-  // Handle payment method selection
-  const handlePaymentMethodSelect = (method) => {
-    setPaymentMethod(method);
+  // Handle symptom selection
+  const handleSymptomSelect = (symptom) => {
+    if (symptoms.includes(symptom)) {
+      setSymptoms(symptoms.filter(s => s !== symptom));
+    } else {
+      setSymptoms([...symptoms, symptom]);
+    }
   };
   
   // Toggle chatbot visibility
@@ -144,11 +122,6 @@ const AppointmentBooking = ({ user, navigateTo }) => {
       return;
     }
     
-    if (!paymentMethod) {
-      setError('Please select a payment method');
-      return;
-    }
-    
     setSubmitting(true);
     setError(null);
     
@@ -159,22 +132,26 @@ const AppointmentBooking = ({ user, navigateTo }) => {
         appointmentDate: selectedDate,
         appointmentTime: selectedTime,
         reason: reason,
-        paymentMethod: paymentMethod,
-        paymentAmount: paymentAmount,
-        paymentStatus: 'paid', // Assuming payment is processed immediately
-        paymentDate: new Date().toISOString()
+        status: 'confirmed',
+        notes: symptoms.length > 0 ? `Reported symptoms: ${symptoms.join(', ')}` : '',
+        priority: priority,
+        followUp: followUp,
+        medicalRecords: medicalRecords
       };
       
       const response = await axios.post('/api/appointments', appointmentData);
       
-      setSuccess('Your appointment has been successfully booked! A confirmation email has been sent to your email address.');
+      setSuccess('Your appointment has been successfully booked! A confirmation email has been sent to your email address with preparation instructions.');
       
       // Reset form
       setSelectedDoctor(null);
       setSelectedDate('');
       setSelectedTime('');
       setReason('');
-      setPaymentMethod('');
+      setSymptoms([]);
+      setPriority('regular');
+      setFollowUp(false);
+      setMedicalRecords(false);
       setAvailableDays([]);
       setAvailableHours([]);
     } catch (err) {
@@ -378,28 +355,135 @@ const AppointmentBooking = ({ user, navigateTo }) => {
                       <p className="mb-1">
                         <strong>Time:</strong> {selectedTime}
                       </p>
-                      <p className="mb-1">
-                        <strong>Reason:</strong> {reason || 'Not specified'}
-                      </p>
                       <p className="mb-0">
-                        <strong>Fee:</strong> ${paymentAmount.toFixed(2)}
+                        <strong>Reason:</strong> {reason || 'Not specified'}
                       </p>
                     </div>
                   )}
                   
-                  {/* Payment Method Selection */}
+                  {/* Appointment Details and Enhanced Information */}
                   {selectedDoctor && selectedDate && selectedTime && (
                     <div className="mb-4">
-                      <PaymentModule 
-                        amount={paymentAmount}
-                        onSuccess={(paymentInfo) => {
-                          setPaymentMethod(paymentInfo.method);
-                          handleSubmit(new Event('submit'));
-                        }}
-                        onCancel={() => {
-                          setPaymentMethod('');
-                        }}
-                      />
+                      <div className="card">
+                        <div className="card-header bg-light">
+                          <h5 className="mb-0">Additional Information</h5>
+                        </div>
+                        <div className="card-body">
+                          {/* Symptoms Checklist */}
+                          <div className="mb-4">
+                            <label className="form-label fw-bold">Common Symptoms (Select all that apply)</label>
+                            <div className="row row-cols-lg-3 row-cols-md-2 row-cols-1 g-2">
+                              {['Chest Pain', 'Shortness of Breath', 'Fatigue', 'Dizziness', 'Palpitations', 'Swelling', 
+                                'High Blood Pressure', 'Nausea', 'Sweating', 'Jaw/Neck Pain'].map(symptom => (
+                                <div className="col" key={symptom}>
+                                  <div 
+                                    className={`card h-100 ${symptoms.includes(symptom) ? 'border-info bg-light' : ''}`}
+                                    onClick={() => handleSymptomSelect(symptom)}
+                                    style={{ cursor: 'pointer' }}
+                                  >
+                                    <div className="card-body p-2">
+                                      <div className="form-check">
+                                        <input 
+                                          className="form-check-input" 
+                                          type="checkbox" 
+                                          checked={symptoms.includes(symptom)}
+                                          onChange={() => {}} 
+                                          id={`symptom-${symptom}`}
+                                        />
+                                        <label className="form-check-label" htmlFor={`symptom-${symptom}`}>
+                                          {symptom}
+                                        </label>
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+
+                          {/* Priority Selection */}
+                          <div className="mb-4">
+                            <label className="form-label fw-bold">Appointment Priority</label>
+                            <div className="btn-group w-100" role="group">
+                              <input 
+                                type="radio" 
+                                className="btn-check" 
+                                name="priority" 
+                                id="priority-regular" 
+                                checked={priority === 'regular'} 
+                                onChange={() => setPriority('regular')}
+                              />
+                              <label className="btn btn-outline-secondary" htmlFor="priority-regular">Regular</label>
+                              
+                              <input 
+                                type="radio" 
+                                className="btn-check" 
+                                name="priority" 
+                                id="priority-urgent" 
+                                checked={priority === 'urgent'} 
+                                onChange={() => setPriority('urgent')}
+                              />
+                              <label className="btn btn-outline-warning" htmlFor="priority-urgent">Urgent</label>
+                              
+                              <input 
+                                type="radio" 
+                                className="btn-check" 
+                                name="priority" 
+                                id="priority-emergency" 
+                                checked={priority === 'emergency'} 
+                                onChange={() => setPriority('emergency')}
+                              />
+                              <label className="btn btn-outline-danger" htmlFor="priority-emergency">Emergency</label>
+                            </div>
+                            <div className="form-text">
+                              {priority === 'emergency' && 
+                                <small className="text-danger">For medical emergencies, please call 911 immediately.</small>}
+                            </div>
+                          </div>
+
+                          {/* Additional Options */}
+                          <div className="mb-3">
+                            <div className="form-check form-switch mb-2">
+                              <input 
+                                className="form-check-input" 
+                                type="checkbox" 
+                                id="followUp" 
+                                checked={followUp}
+                                onChange={() => setFollowUp(!followUp)}
+                              />
+                              <label className="form-check-label" htmlFor="followUp">
+                                This is a follow-up appointment
+                              </label>
+                            </div>
+                            
+                            <div className="form-check form-switch">
+                              <input 
+                                className="form-check-input" 
+                                type="checkbox" 
+                                id="medicalRecords" 
+                                checked={medicalRecords}
+                                onChange={() => setMedicalRecords(!medicalRecords)}
+                              />
+                              <label className="form-check-label" htmlFor="medicalRecords">
+                                I will bring my medical records
+                              </label>
+                            </div>
+                          </div>
+
+                          {/* Preparation Instructions */}
+                          <div className="alert alert-light border mt-3 mb-0">
+                            <h6 className="alert-heading fw-bold">Appointment Preparation</h6>
+                            <p className="small mb-1">To make the most of your appointment, please:</p>
+                            <ul className="small mb-0">
+                              <li>Arrive 15 minutes early to complete any necessary paperwork</li>
+                              <li>Bring a list of current medications and dosages</li>
+                              <li>Bring your insurance card and ID</li>
+                              <li>Fast for 8 hours if lab work is needed</li>
+                              <li>Wear comfortable clothing that allows easy examination</li>
+                            </ul>
+                          </div>
+                        </div>
+                      </div>
                     </div>
                   )}
                   
