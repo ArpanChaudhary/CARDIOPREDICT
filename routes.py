@@ -38,23 +38,25 @@ def register():
     )
     user.set_password(data['password'])
     
-    db.session.add(user)
-    
-    # If user is a doctor, create doctor profile
-    if data['role'] == 'doctor' and 'doctor' in data:
-        doctor_data = data['doctor']
-        doctor = Doctor(
-            user_id=user.id,
-            specialization=doctor_data['specialization'],
-            experience_years=doctor_data['experienceYears'],
-            bio=doctor_data.get('bio', ''),
-            available_days=','.join(doctor_data.get('availableDays', [])),
-            available_hours=','.join(doctor_data.get('availableHours', []))
-        )
-        db.session.add(doctor)
-    
     try:
+        # First commit the user to get an ID
+        db.session.add(user)
         db.session.commit()
+        
+        # If user is a doctor, create doctor profile after user has an ID
+        if data['role'] == 'doctor' and 'doctor' in data:
+            doctor_data = data['doctor']
+            doctor = Doctor(
+                user_id=user.id,
+                specialization=doctor_data['specialization'],
+                experience_years=doctor_data['experienceYears'],
+                bio=doctor_data.get('bio', ''),
+                available_days=','.join(doctor_data.get('availableDays', [])),
+                available_hours=','.join(doctor_data.get('availableHours', []))
+            )
+            db.session.add(doctor)
+            db.session.commit()
+        
         return jsonify({'message': 'Registration successful', 'user': user.to_dict()}), 201
     except Exception as e:
         db.session.rollback()
