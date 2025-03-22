@@ -30,10 +30,14 @@ def send_email(to_email, subject, text_content):
         sg = SendGridAPIClient(sendgrid_key)
         
         # Set up the email
-        from_email = Email("healthsystem@example.com")  # Change this to your verified sender
+        # Use a domain that's been verified in your SendGrid account
+        verified_sender = os.environ.get('VERIFIED_SENDER_EMAIL', 'noreply@smarthealth.app')
+        from_email = Email(verified_sender)
         to_email = To(to_email)
         content = Content("text/plain", text_content)
         
+        # Enable detailed logging for debugging
+        logging.debug(f"Sending email from: {verified_sender} to: {to_email.email}")
         mail = Mail(from_email, to_email, subject, content)
         
         # Send the email

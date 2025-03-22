@@ -14,8 +14,12 @@ const UserDashboard = ({ user, navigateTo }) => {
   // Charts
   const predictionChartRef = React.useRef(null);
   const bpChartRef = React.useRef(null);
+  const bmiChartRef = React.useRef(null);
+  const lifestyleChartRef = React.useRef(null);
   let predictionChart = null;
   let bpChart = null;
+  let bmiChart = null;
+  let lifestyleChart = null;
 
   // Fetch user data on component mount
   React.useEffect(() => {
@@ -30,6 +34,12 @@ const UserDashboard = ({ user, navigateTo }) => {
       }
       if (bpChart) {
         bpChart.destroy();
+      }
+      if (bmiChart) {
+        bmiChart.destroy();
+      }
+      if (lifestyleChart) {
+        lifestyleChart.destroy();
       }
     };
   }, []);
@@ -392,6 +402,92 @@ const UserDashboard = ({ user, navigateTo }) => {
         </div>
       </div>
       
+      {/* New Charts Row */}
+      {predictions.length > 0 && (
+        <div className="row mb-4">
+          {/* BMI Tracker Chart */}
+          <div className="col-lg-6 mb-4 mb-lg-0">
+            <div className="card dashboard-card">
+              <div className="card-header d-flex justify-content-between align-items-center">
+                <h5 className="mb-0">BMI Tracker</h5>
+                <div className="dropdown">
+                  <button className="btn btn-sm btn-outline-secondary dropdown-toggle" type="button" id="bmiChartOptions" data-bs-toggle="dropdown" aria-expanded="false">
+                    Options
+                  </button>
+                  <ul className="dropdown-menu dropdown-menu-end" aria-labelledby="bmiChartOptions">
+                    <li><button className="dropdown-item" onClick={() => {}}>Last 5 entries</button></li>
+                    <li><button className="dropdown-item" onClick={() => {}}>Last 10 entries</button></li>
+                    <li><button className="dropdown-item" onClick={() => {}}>All entries</button></li>
+                  </ul>
+                </div>
+              </div>
+              <div className="card-body">
+                <div className="chart-container" style={{ position: 'relative', height: '250px' }}>
+                  <canvas id="bmiChart"></canvas>
+                </div>
+                <div className="mt-3">
+                  <div className="d-flex justify-content-between">
+                    <div>
+                      <span className="d-block text-muted small">Underweight</span>
+                      <span className="badge bg-info">Below 18.5</span>
+                    </div>
+                    <div>
+                      <span className="d-block text-muted small">Normal</span>
+                      <span className="badge bg-success">18.5 - 24.9</span>
+                    </div>
+                    <div>
+                      <span className="d-block text-muted small">Overweight</span>
+                      <span className="badge bg-warning">25 - 29.9</span>
+                    </div>
+                    <div>
+                      <span className="d-block text-muted small">Obese</span>
+                      <span className="badge bg-danger">30+</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          {/* Lifestyle Factor Impact */}
+          <div className="col-lg-6">
+            <div className="card dashboard-card">
+              <div className="card-header">
+                <h5 className="mb-0">Lifestyle Factors Impact</h5>
+              </div>
+              <div className="card-body">
+                <div className="chart-container" style={{ position: 'relative', height: '250px' }}>
+                  <canvas id="lifestyleChart"></canvas>
+                </div>
+                <div className="mt-3 small text-muted text-center">
+                  This chart shows how different lifestyle factors are contributing to your cardiovascular risk based on your assessments
+                </div>
+              </div>
+              <div className="card-footer bg-transparent">
+                <div className="row text-center">
+                  <div className="col">
+                    <div className="d-inline-block me-1" style={{ width: '12px', height: '12px', backgroundColor: '#36a2eb', borderRadius: '50%' }}></div>
+                    <span className="small">Diet</span>
+                  </div>
+                  <div className="col">
+                    <div className="d-inline-block me-1" style={{ width: '12px', height: '12px', backgroundColor: '#ff6384', borderRadius: '50%' }}></div>
+                    <span className="small">Exercise</span>
+                  </div>
+                  <div className="col">
+                    <div className="d-inline-block me-1" style={{ width: '12px', height: '12px', backgroundColor: '#4bc0c0', borderRadius: '50%' }}></div>
+                    <span className="small">Smoking</span>
+                  </div>
+                  <div className="col">
+                    <div className="d-inline-block me-1" style={{ width: '12px', height: '12px', backgroundColor: '#ff9f40', borderRadius: '50%' }}></div>
+                    <span className="small">Sleep</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+      
       {/* Recent Appointments */}
       <div className="row mb-4">
         <div className="col-12">
@@ -416,6 +512,7 @@ const UserDashboard = ({ user, navigateTo }) => {
                         <th>Doctor</th>
                         <th>Reason</th>
                         <th>Status</th>
+                        <th>Actions</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -429,6 +526,45 @@ const UserDashboard = ({ user, navigateTo }) => {
                             <span className={`status-badge ${appointment.status}`}>
                               {appointment.status.charAt(0).toUpperCase() + appointment.status.slice(1)}
                             </span>
+                          </td>
+                          <td>
+                            <div className="btn-group btn-group-sm">
+                              <button
+                                className="btn btn-outline-primary btn-sm"
+                                onClick={() => {
+                                  // Navigate to appointment booking with pre-filled data
+                                  navigateTo('appointmentBooking', { 
+                                    editMode: true, 
+                                    appointmentId: appointment.id,
+                                    doctorId: appointment.doctor_id,
+                                    appointmentDate: appointment.appointment_date,
+                                    appointmentTime: appointment.appointment_time,
+                                    reason: appointment.reason
+                                  });
+                                }}
+                                disabled={appointment.status === 'completed' || appointment.status === 'cancelled'}
+                              >
+                                <i className="fas fa-edit"></i>
+                              </button>
+                              <button
+                                className="btn btn-outline-danger btn-sm"
+                                onClick={async () => {
+                                  if (confirm('Are you sure you want to cancel this appointment?')) {
+                                    try {
+                                      await axios.delete(`/api/appointments/${appointment.id}`);
+                                      // Refresh appointments
+                                      fetchUserData();
+                                    } catch (err) {
+                                      console.error('Error cancelling appointment:', err);
+                                      alert('Failed to cancel appointment. Please try again.');
+                                    }
+                                  }
+                                }}
+                                disabled={appointment.status === 'completed' || appointment.status === 'cancelled'}
+                              >
+                                <i className="fas fa-times"></i>
+                              </button>
+                            </div>
                           </td>
                         </tr>
                       ))}
