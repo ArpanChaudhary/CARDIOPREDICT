@@ -532,7 +532,8 @@ const PredictionForm = ({ user, navigateTo }) => {
                       </div>
                     </div>
                   </div>
-                
+                  
+                  {/* Always show Basic Information for any assessment type */}
                   <div className="row mb-4">
                     <div className="col-12">
                       <h5 className="mb-3">Basic Information</h5>
@@ -613,128 +614,551 @@ const PredictionForm = ({ user, navigateTo }) => {
                     </div>
                   </div>
                   
-                  <div className="row mb-4">
-                    <div className="col-12">
-                      <h5 className="mb-3">Blood Pressure</h5>
+                  {/* Clinical Symptoms Section - Show only for AI or Clinical assessment */}
+                  {(predictionType === 'ai' || predictionType === 'clinical') && (
+                    <div className="row mb-4">
+                      <div className="col-12">
+                        <h5 className="mb-3">Clinical Symptoms</h5>
+                      </div>
+                      <div className="col-md-6 mb-3">
+                        <div className="form-check mb-2">
+                          <input
+                            className="form-check-input"
+                            type="checkbox"
+                            id="chestPain"
+                            name="chestPain"
+                            checked={formData.chestPain}
+                            onChange={handleInputChange}
+                          />
+                          <label className="form-check-label" htmlFor="chestPain">
+                            Chest Pain
+                          </label>
+                        </div>
+                        <div className="form-check mb-2">
+                          <input
+                            className="form-check-input"
+                            type="checkbox"
+                            id="shortnessOfBreath"
+                            name="shortnessOfBreath"
+                            checked={formData.shortnessOfBreath}
+                            onChange={handleInputChange}
+                          />
+                          <label className="form-check-label" htmlFor="shortnessOfBreath">
+                            Shortness of Breath
+                          </label>
+                        </div>
+                        <div className="form-check mb-2">
+                          <input
+                            className="form-check-input"
+                            type="checkbox"
+                            id="fatigue"
+                            name="fatigue"
+                            checked={formData.fatigue}
+                            onChange={handleInputChange}
+                          />
+                          <label className="form-check-label" htmlFor="fatigue">
+                            Fatigue
+                          </label>
+                        </div>
+                        <div className="form-check mb-2">
+                          <input
+                            className="form-check-input"
+                            type="checkbox"
+                            id="palpitations"
+                            name="palpitations"
+                            checked={formData.palpitations}
+                            onChange={handleInputChange}
+                          />
+                          <label className="form-check-label" htmlFor="palpitations">
+                            Palpitations
+                          </label>
+                        </div>
+                        <div className="form-check">
+                          <input
+                            className="form-check-input"
+                            type="checkbox"
+                            id="dizziness"
+                            name="dizziness"
+                            checked={formData.dizziness}
+                            onChange={handleInputChange}
+                          />
+                          <label className="form-check-label" htmlFor="dizziness">
+                            Dizziness
+                          </label>
+                        </div>
+                      </div>
+                      <div className="col-md-6 mb-3">
+                        <div className="form-check mb-2">
+                          <input
+                            className="form-check-input"
+                            type="checkbox"
+                            id="swelling"
+                            name="swelling"
+                            checked={formData.swelling}
+                            onChange={handleInputChange}
+                          />
+                          <label className="form-check-label" htmlFor="swelling">
+                            Swelling in Legs/Ankles
+                          </label>
+                        </div>
+                        <div className="form-check mb-2">
+                          <input
+                            className="form-check-input"
+                            type="checkbox"
+                            id="nausea"
+                            name="nausea"
+                            checked={formData.nausea}
+                            onChange={handleInputChange}
+                          />
+                          <label className="form-check-label" htmlFor="nausea">
+                            Nausea
+                          </label>
+                        </div>
+                        <div className="form-check mb-2">
+                          <input
+                            className="form-check-input"
+                            type="checkbox"
+                            id="coldSweats"
+                            name="coldSweats"
+                            checked={formData.coldSweats}
+                            onChange={handleInputChange}
+                          />
+                          <label className="form-check-label" htmlFor="coldSweats">
+                            Cold Sweats
+                          </label>
+                        </div>
+                        <div className="form-check mb-2">
+                          <input
+                            className="form-check-input"
+                            type="checkbox"
+                            id="painJawNeckBack"
+                            name="painJawNeckBack"
+                            checked={formData.painJawNeckBack}
+                            onChange={handleInputChange}
+                          />
+                          <label className="form-check-label" htmlFor="painJawNeckBack">
+                            Pain in Jaw/Neck/Back
+                          </label>
+                        </div>
+                        <div className="form-check">
+                          <input
+                            className="form-check-input"
+                            type="checkbox"
+                            id="leftArmPain"
+                            name="leftArmPain"
+                            checked={formData.leftArmPain}
+                            onChange={handleInputChange}
+                          />
+                          <label className="form-check-label" htmlFor="leftArmPain">
+                            Left Arm Pain
+                          </label>
+                        </div>
+                      </div>
                     </div>
-                    <div className="col-md-6 mb-3">
-                      <label htmlFor="systolicBp" className="form-label">Systolic Blood Pressure (mmHg) *</label>
-                      <input
-                        type="number"
-                        className="form-control"
-                        id="systolicBp"
-                        name="systolicBp"
-                        value={formData.systolicBp}
-                        onChange={handleInputChange}
-                        min="80"
-                        max="250"
-                        required
-                      />
-                      <small className="form-text text-muted">The upper number in a blood pressure reading</small>
-                    </div>
-                    <div className="col-md-6 mb-3">
-                      <label htmlFor="diastolicBp" className="form-label">Diastolic Blood Pressure (mmHg) *</label>
-                      <input
-                        type="number"
-                        className="form-control"
-                        id="diastolicBp"
-                        name="diastolicBp"
-                        value={formData.diastolicBp}
-                        onChange={handleInputChange}
-                        min="40"
-                        max="150"
-                        required
-                      />
-                      <small className="form-text text-muted">The lower number in a blood pressure reading</small>
-                    </div>
-                  </div>
+                  )}
                   
-                  <div className="row mb-4">
-                    <div className="col-12">
-                      <h5 className="mb-3">Biochemical Measurements</h5>
-                    </div>
-                    <div className="col-md-6 mb-3">
-                      <label htmlFor="cholesterol" className="form-label">Cholesterol Level *</label>
-                      <select
-                        className="form-select"
-                        id="cholesterol"
-                        name="cholesterol"
-                        value={formData.cholesterol}
-                        onChange={handleInputChange}
-                        required
-                      >
-                        <option value="1">Normal</option>
-                        <option value="2">Above Normal</option>
-                        <option value="3">Well Above Normal</option>
-                      </select>
-                    </div>
-                    <div className="col-md-6 mb-3">
-                      <label htmlFor="glucose" className="form-label">Glucose Level *</label>
-                      <select
-                        className="form-select"
-                        id="glucose"
-                        name="glucose"
-                        value={formData.glucose}
-                        onChange={handleInputChange}
-                        required
-                      >
-                        <option value="1">Normal</option>
-                        <option value="2">Above Normal</option>
-                        <option value="3">Well Above Normal</option>
-                      </select>
-                    </div>
-                  </div>
+                  {/* Physiological Indicators Section - Show only for AI or Physiological assessment */}
+                  {(predictionType === 'ai' || predictionType === 'physiological') && (
+                    <>
+                      <div className="row mb-4">
+                        <div className="col-12">
+                          <h5 className="mb-3">Blood Pressure</h5>
+                        </div>
+                        <div className="col-md-6 mb-3">
+                          <label htmlFor="systolicBp" className="form-label">Systolic Blood Pressure (mmHg) *</label>
+                          <input
+                            type="number"
+                            className="form-control"
+                            id="systolicBp"
+                            name="systolicBp"
+                            value={formData.systolicBp}
+                            onChange={handleInputChange}
+                            min="80"
+                            max="250"
+                            required
+                          />
+                          <small className="form-text text-muted">The upper number in a blood pressure reading</small>
+                        </div>
+                        <div className="col-md-6 mb-3">
+                          <label htmlFor="diastolicBp" className="form-label">Diastolic Blood Pressure (mmHg) *</label>
+                          <input
+                            type="number"
+                            className="form-control"
+                            id="diastolicBp"
+                            name="diastolicBp"
+                            value={formData.diastolicBp}
+                            onChange={handleInputChange}
+                            min="40"
+                            max="150"
+                            required
+                          />
+                          <small className="form-text text-muted">The lower number in a blood pressure reading</small>
+                        </div>
+                      </div>
+                      
+                      <div className="row mb-4">
+                        <div className="col-12">
+                          <h5 className="mb-3">Biochemical Measurements</h5>
+                        </div>
+                        <div className="col-md-6 mb-3">
+                          <label htmlFor="cholesterol" className="form-label">Cholesterol Level *</label>
+                          <select
+                            className="form-select"
+                            id="cholesterol"
+                            name="cholesterol"
+                            value={formData.cholesterol}
+                            onChange={handleInputChange}
+                            required
+                          >
+                            <option value="1">Normal</option>
+                            <option value="2">Above Normal</option>
+                            <option value="3">Well Above Normal</option>
+                          </select>
+                        </div>
+                        <div className="col-md-6 mb-3">
+                          <label htmlFor="glucose" className="form-label">Glucose Level *</label>
+                          <select
+                            className="form-select"
+                            id="glucose"
+                            name="glucose"
+                            value={formData.glucose}
+                            onChange={handleInputChange}
+                            required
+                          >
+                            <option value="1">Normal</option>
+                            <option value="2">Above Normal</option>
+                            <option value="3">Well Above Normal</option>
+                          </select>
+                        </div>
+                      </div>
+                      
+                      <div className="row mb-4">
+                        <div className="col-12">
+                          <h5 className="mb-3">Additional Physiological Measurements</h5>
+                        </div>
+                        <div className="col-md-6 mb-3">
+                          <label htmlFor="heartRate" className="form-label">Resting Heart Rate (BPM)</label>
+                          <input
+                            type="number"
+                            className="form-control"
+                            id="heartRate"
+                            name="heartRate"
+                            value={formData.heartRate}
+                            onChange={handleInputChange}
+                            min="40"
+                            max="200"
+                          />
+                        </div>
+                        <div className="col-md-6 mb-3">
+                          <label htmlFor="waistHipRatio" className="form-label">Waist-Hip Ratio</label>
+                          <input
+                            type="number"
+                            className="form-control"
+                            id="waistHipRatio"
+                            name="waistHipRatio"
+                            value={formData.waistHipRatio}
+                            onChange={handleInputChange}
+                            min="0.5"
+                            max="2"
+                            step="0.01"
+                          />
+                        </div>
+                      </div>
+                    </>
+                  )}
                   
-                  <div className="row mb-4">
-                    <div className="col-12">
-                      <h5 className="mb-3">Lifestyle Factors</h5>
-                    </div>
-                    <div className="col-md-4 mb-3">
-                      <div className="form-check">
+                  {/* Lifestyle Factors Section - Show only for AI or Lifestyle assessment */}
+                  {(predictionType === 'ai' || predictionType === 'lifestyle') && (
+                    <div className="row mb-4">
+                      <div className="col-12">
+                        <h5 className="mb-3">Lifestyle Factors</h5>
+                      </div>
+                      <div className="col-md-4 mb-3">
+                        <div className="form-check">
+                          <input
+                            className="form-check-input"
+                            type="checkbox"
+                            id="smoking"
+                            name="smoking"
+                            checked={formData.smoking}
+                            onChange={handleInputChange}
+                          />
+                          <label className="form-check-label" htmlFor="smoking">
+                            Smoking
+                          </label>
+                        </div>
+                      </div>
+                      <div className="col-md-4 mb-3">
+                        <div className="form-check">
+                          <input
+                            className="form-check-input"
+                            type="checkbox"
+                            id="alcohol"
+                            name="alcohol"
+                            checked={formData.alcohol}
+                            onChange={handleInputChange}
+                          />
+                          <label className="form-check-label" htmlFor="alcohol">
+                            Alcohol Consumption
+                          </label>
+                        </div>
+                      </div>
+                      <div className="col-md-4 mb-3">
+                        <div className="form-check">
+                          <input
+                            className="form-check-input"
+                            type="checkbox"
+                            id="physicalActivity"
+                            name="physicalActivity"
+                            checked={formData.physicalActivity}
+                            onChange={handleInputChange}
+                          />
+                          <label className="form-check-label" htmlFor="physicalActivity">
+                            Regular Physical Activity
+                          </label>
+                        </div>
+                      </div>
+                      <div className="col-md-4 mb-3">
+                        <div className="form-check">
+                          <input
+                            className="form-check-input"
+                            type="checkbox"
+                            id="highSaltDiet"
+                            name="highSaltDiet"
+                            checked={formData.highSaltDiet}
+                            onChange={handleInputChange}
+                          />
+                          <label className="form-check-label" htmlFor="highSaltDiet">
+                            High Salt Diet
+                          </label>
+                        </div>
+                      </div>
+                      <div className="col-md-4 mb-3">
+                        <div className="form-check">
+                          <input
+                            className="form-check-input"
+                            type="checkbox"
+                            id="highFatDiet"
+                            name="highFatDiet"
+                            checked={formData.highFatDiet}
+                            onChange={handleInputChange}
+                          />
+                          <label className="form-check-label" htmlFor="highFatDiet">
+                            High Fat Diet
+                          </label>
+                        </div>
+                      </div>
+                      <div className="col-md-4 mb-3">
+                        <label htmlFor="sleepHours" className="form-label">Sleep Hours (per day)</label>
                         <input
-                          className="form-check-input"
-                          type="checkbox"
-                          id="smoking"
-                          name="smoking"
-                          checked={formData.smoking}
+                          type="number"
+                          className="form-control"
+                          id="sleepHours"
+                          name="sleepHours"
+                          value={formData.sleepHours}
                           onChange={handleInputChange}
+                          min="1"
+                          max="16"
+                          step="0.5"
                         />
-                        <label className="form-check-label" htmlFor="smoking">
-                          Smoking
-                        </label>
+                      </div>
+                      <div className="col-md-4 mb-3">
+                        <label htmlFor="stressLevel" className="form-label">Stress Level (1-10)</label>
+                        <select
+                          className="form-select"
+                          id="stressLevel"
+                          name="stressLevel"
+                          value={formData.stressLevel}
+                          onChange={handleInputChange}
+                        >
+                          {[...Array(10)].map((_, i) => (
+                            <option key={i+1} value={i+1}>{i+1}</option>
+                          ))}
+                        </select>
+                      </div>
+                      <div className="col-md-4 mb-3">
+                        <label htmlFor="workHours" className="form-label">Work Hours (per week)</label>
+                        <input
+                          type="number"
+                          className="form-control"
+                          id="workHours"
+                          name="workHours"
+                          value={formData.workHours}
+                          onChange={handleInputChange}
+                          min="0"
+                          max="100"
+                        />
                       </div>
                     </div>
-                    <div className="col-md-4 mb-3">
-                      <div className="form-check">
-                        <input
-                          className="form-check-input"
-                          type="checkbox"
-                          id="alcohol"
-                          name="alcohol"
-                          checked={formData.alcohol}
-                          onChange={handleInputChange}
-                        />
-                        <label className="form-check-label" htmlFor="alcohol">
-                          Alcohol Consumption
-                        </label>
+                  )}
+                  
+                  {/* Genetic History Section - Show only for AI or Genetic assessment */}
+                  {(predictionType === 'ai' || predictionType === 'genetic') && (
+                    <div className="row mb-4">
+                      <div className="col-12">
+                        <h5 className="mb-3">Genetic and Family History</h5>
+                      </div>
+                      <div className="col-md-4 mb-3">
+                        <div className="form-check">
+                          <input
+                            className="form-check-input"
+                            type="checkbox"
+                            id="familyHistory"
+                            name="familyHistory"
+                            checked={formData.familyHistory}
+                            onChange={handleInputChange}
+                          />
+                          <label className="form-check-label" htmlFor="familyHistory">
+                            Family History of Heart Disease
+                          </label>
+                        </div>
+                      </div>
+                      <div className="col-md-4 mb-3">
+                        <div className="form-check">
+                          <input
+                            className="form-check-input"
+                            type="checkbox"
+                            id="geneticDisorders"
+                            name="geneticDisorders"
+                            checked={formData.geneticDisorders}
+                            onChange={handleInputChange}
+                          />
+                          <label className="form-check-label" htmlFor="geneticDisorders">
+                            Genetic Disorders
+                          </label>
+                        </div>
+                      </div>
+                      <div className="col-md-4 mb-3">
+                        <div className="form-check">
+                          <input
+                            className="form-check-input"
+                            type="checkbox"
+                            id="previousHeartProblems"
+                            name="previousHeartProblems"
+                            checked={formData.previousHeartProblems}
+                            onChange={handleInputChange}
+                          />
+                          <label className="form-check-label" htmlFor="previousHeartProblems">
+                            Previous Heart Problems
+                          </label>
+                        </div>
                       </div>
                     </div>
-                    <div className="col-md-4 mb-3">
-                      <div className="form-check">
-                        <input
-                          className="form-check-input"
-                          type="checkbox"
-                          id="physicalActivity"
-                          name="physicalActivity"
-                          checked={formData.physicalActivity}
-                          onChange={handleInputChange}
-                        />
-                        <label className="form-check-label" htmlFor="physicalActivity">
-                          Regular Physical Activity
-                        </label>
+                  )}
+                  
+                  {/* Additional Risk Conditions - Show only for AI or Additional assessment */}
+                  {(predictionType === 'ai' || predictionType === 'additional') && (
+                    <div className="row mb-4">
+                      <div className="col-12">
+                        <h5 className="mb-3">Additional Risk Conditions</h5>
+                      </div>
+                      <div className="col-md-4 mb-3">
+                        <div className="form-check">
+                          <input
+                            className="form-check-input"
+                            type="checkbox"
+                            id="diabetes"
+                            name="diabetes"
+                            checked={formData.diabetes}
+                            onChange={handleInputChange}
+                          />
+                          <label className="form-check-label" htmlFor="diabetes">
+                            Diabetes
+                          </label>
+                        </div>
+                      </div>
+                      <div className="col-md-4 mb-3">
+                        <div className="form-check">
+                          <input
+                            className="form-check-input"
+                            type="checkbox"
+                            id="hypertension"
+                            name="hypertension"
+                            checked={formData.hypertension}
+                            onChange={handleInputChange}
+                          />
+                          <label className="form-check-label" htmlFor="hypertension">
+                            Hypertension
+                          </label>
+                        </div>
+                      </div>
+                      <div className="col-md-4 mb-3">
+                        <div className="form-check">
+                          <input
+                            className="form-check-input"
+                            type="checkbox"
+                            id="kidneyDisease"
+                            name="kidneyDisease"
+                            checked={formData.kidneyDisease}
+                            onChange={handleInputChange}
+                          />
+                          <label className="form-check-label" htmlFor="kidneyDisease">
+                            Kidney Disease
+                          </label>
+                        </div>
+                      </div>
+                      <div className="col-md-4 mb-3">
+                        <div className="form-check">
+                          <input
+                            className="form-check-input"
+                            type="checkbox"
+                            id="thyroidDisorders"
+                            name="thyroidDisorders"
+                            checked={formData.thyroidDisorders}
+                            onChange={handleInputChange}
+                          />
+                          <label className="form-check-label" htmlFor="thyroidDisorders">
+                            Thyroid Disorders
+                          </label>
+                        </div>
+                      </div>
+                      <div className="col-md-4 mb-3">
+                        <div className="form-check">
+                          <input
+                            className="form-check-input"
+                            type="checkbox"
+                            id="anemia"
+                            name="anemia"
+                            checked={formData.anemia}
+                            onChange={handleInputChange}
+                          />
+                          <label className="form-check-label" htmlFor="anemia">
+                            Anemia
+                          </label>
+                        </div>
+                      </div>
+                      <div className="col-md-4 mb-3">
+                        <div className="form-check">
+                          <input
+                            className="form-check-input"
+                            type="checkbox"
+                            id="autoimmune"
+                            name="autoimmune"
+                            checked={formData.autoimmune}
+                            onChange={handleInputChange}
+                          />
+                          <label className="form-check-label" htmlFor="autoimmune">
+                            Autoimmune Disorders
+                          </label>
+                        </div>
+                      </div>
+                      <div className="col-md-4 mb-3">
+                        <div className="form-check">
+                          <input
+                            className="form-check-input"
+                            type="checkbox"
+                            id="metabolicSyndrome"
+                            name="metabolicSyndrome"
+                            checked={formData.metabolicSyndrome}
+                            onChange={handleInputChange}
+                          />
+                          <label className="form-check-label" htmlFor="metabolicSyndrome">
+                            Metabolic Syndrome
+                          </label>
+                        </div>
                       </div>
                     </div>
-                  </div>
+                  )}
                   
                   <div className="d-grid gap-2 d-md-flex justify-content-md-end">
                     <button 
