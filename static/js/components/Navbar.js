@@ -5,7 +5,7 @@ const Navbar = ({ user, onLogout, navigateTo }) => {
       <div className="container">
         <a className="navbar-brand" href="#" onClick={() => navigateTo('landing')}>
           <i className="fas fa-heartbeat"></i>
-          CardioHealth
+          Smart Healthcare Ecosystem
         </a>
         <button 
           className="navbar-toggler" 

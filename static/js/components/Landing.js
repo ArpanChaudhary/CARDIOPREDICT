@@ -8,10 +8,10 @@ const Landing = ({ navigateTo }) => {
           <div className="row align-items-center">
             <div className="col-lg-6">
               <h1 className="display-4 fw-bold text-white">
-                Take Control of Your <span className="text-info">Heart Health</span>
+                Smart <span className="text-info">Healthcare Ecosystem</span>
               </h1>
               <p className="lead mb-4">
-                Advanced AI-powered prediction system for cardiovascular disease risk assessment and easy doctor appointment booking.
+                Advanced AI-powered comprehensive health management system with cardiovascular disease prediction, symptom analysis, and seamless doctor appointment booking.
               </p>
               <div className="d-flex gap-3">
                 <button 
@@ -46,40 +46,73 @@ const Landing = ({ navigateTo }) => {
           <div className="text-center mb-5">
             <h2 className="fw-bold">Our Features</h2>
             <p className="text-muted">
-              Comprehensive tools for monitoring and improving cardiovascular health
+              Comprehensive smart healthcare ecosystem for complete health management
             </p>
           </div>
           <div className="row">
-            <div className="col-md-4">
+            <div className="col-md-4 mb-4">
               <div className="feature-card">
                 <div className="feature-icon">
                   <i className="fas fa-brain"></i>
                 </div>
-                <h4>AI Prediction</h4>
+                <h4>AI-Powered Prediction</h4>
                 <p className="text-muted">
-                  Advanced machine learning algorithms to predict cardiovascular disease risk based on your health data.
+                  Advanced machine learning algorithms analyze 5 distinct symptom categories to predict cardiovascular disease risk with high accuracy.
                 </p>
               </div>
             </div>
-            <div className="col-md-4">
+            <div className="col-md-4 mb-4">
               <div className="feature-card">
                 <div className="feature-icon">
                   <i className="fas fa-calendar-check"></i>
                 </div>
-                <h4>Easy Appointments</h4>
+                <h4>Seamless Appointment Booking</h4>
                 <p className="text-muted">
-                  Seamlessly book appointments with specialized cardiologists and receive email confirmations.
+                  Book appointments with specialized doctors, receive email confirmations, and manage your healthcare schedule in one place.
                 </p>
               </div>
             </div>
-            <div className="col-md-4">
+            <div className="col-md-4 mb-4">
               <div className="feature-card">
                 <div className="feature-icon">
                   <i className="fas fa-chart-line"></i>
                 </div>
-                <h4>Health Tracking</h4>
+                <h4>Health Tracking Dashboard</h4>
                 <p className="text-muted">
-                  Monitor your cardiovascular health metrics over time with detailed visualization tools.
+                  Monitor your health metrics over time with detailed visualization tools and personalized risk assessments.
+                </p>
+              </div>
+            </div>
+            <div className="col-md-4 mb-4">
+              <div className="feature-card">
+                <div className="feature-icon">
+                  <i className="fas fa-credit-card"></i>
+                </div>
+                <h4>Secure Payment Processing</h4>
+                <p className="text-muted">
+                  Easily pay for medical appointments through our secure integrated payment system with multiple payment options.
+                </p>
+              </div>
+            </div>
+            <div className="col-md-4 mb-4">
+              <div className="feature-card">
+                <div className="feature-icon">
+                  <i className="fas fa-user-md"></i>
+                </div>
+                <h4>Doctor Management Portal</h4>
+                <p className="text-muted">
+                  Specialized interface for healthcare providers to manage appointments, review patient data, and optimize their practice.
+                </p>
+              </div>
+            </div>
+            <div className="col-md-4 mb-4">
+              <div className="feature-card">
+                <div className="feature-icon">
+                  <i className="fas fa-comments"></i>
+                </div>
+                <h4>Health Information Chatbot</h4>
+                <p className="text-muted">
+                  Get instant answers about cardiovascular health, symptoms, and preventive measures through our interactive chatbot.
                 </p>
               </div>
             </div>
@@ -146,16 +179,24 @@ const Landing = ({ navigateTo }) => {
         <div className="container">
           <div className="row justify-content-center text-center">
             <div className="col-lg-8">
-              <h2 className="fw-bold mb-3">Ready to take control of your heart health?</h2>
+              <h2 className="fw-bold mb-3">Join Our Smart Healthcare Ecosystem Today</h2>
               <p className="lead mb-4">
-                Register now to access our AI prediction tool and connect with specialized doctors.
+                Register now to access our comprehensive health management system with AI prediction tools, appointment booking, and personalized health tracking.
               </p>
-              <button 
-                className="btn btn-dark btn-lg px-5" 
-                onClick={() => navigateTo('register')}
-              >
-                Sign Up Today
-              </button>
+              <div className="d-flex justify-content-center gap-3">
+                <button 
+                  className="btn btn-dark btn-lg px-5" 
+                  onClick={() => navigateTo('register')}
+                >
+                  Sign Up Today
+                </button>
+                <button 
+                  className="btn btn-outline-dark btn-lg px-5" 
+                  onClick={() => navigateTo('login')}
+                >
+                  Log In
+                </button>
+              </div>
             </div>
           </div>
         </div>

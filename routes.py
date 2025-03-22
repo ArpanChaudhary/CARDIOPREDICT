@@ -170,15 +170,26 @@ def get_user_predictions(user_id):
 def create_appointment():
     data = request.get_json()
     
-    # Create new appointment
+    # Create new appointment with payment info
     appointment = Appointment(
         user_id=data['userId'],
         doctor_id=data['doctorId'],
         appointment_date=datetime.strptime(data['appointmentDate'], '%Y-%m-%d').date(),
         appointment_time=data['appointmentTime'],
         reason=data.get('reason', ''),
-        status='pending'
+        status='confirmed',
+        payment_method=data.get('paymentMethod'),
+        payment_amount=data.get('paymentAmount', 0.0),
+        payment_status=data.get('paymentStatus', 'unpaid')
     )
+    
+    # Set payment date if provided
+    if data.get('paymentDate'):
+        try:
+            appointment.payment_date = datetime.fromisoformat(data.get('paymentDate').replace('Z', '+00:00'))
+        except ValueError:
+            # If ISO format fails, try simple date parsing
+            appointment.payment_date = datetime.strptime(data.get('paymentDate'), '%Y-%m-%d')
     
     db.session.add(appointment)
     
@@ -190,14 +201,22 @@ def create_appointment():
         doctor_model = Doctor.query.get(data['doctorId'])
         doctor_user = User.query.get(doctor_model.user_id)
         
-        send_appointment_confirmation(
-            user.email,
-            user.full_name,
-            doctor_user.full_name,
-            doctor_model.specialization,
-            data['appointmentDate'],
-            data['appointmentTime']
-        )
+        # Prepare appointment details for email
+        appointment_details = {
+            'patient_name': user.full_name,
+            'doctor_name': doctor_user.full_name,
+            'specialization': doctor_model.specialization,
+            'date': appointment.appointment_date.strftime('%A, %B %d, %Y'),
+            'time': appointment.appointment_time,
+            'reason': appointment.reason,
+            'payment_method': appointment.payment_method,
+            'payment_amount': f"${appointment.payment_amount:.2f}",
+            'payment_status': appointment.payment_status.title()
+        }
+        
+        # Use the email service function
+        from email_service import send_appointment_confirmation_email
+        send_appointment_confirmation_email(user.email, appointment_details)
         
         return jsonify({
             'message': 'Appointment created successfully',

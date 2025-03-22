@@ -7,22 +7,37 @@ const App = () => {
 
   // Check if user is logged in on component mount
   React.useEffect(() => {
-    const storedUser = localStorage.getItem('cardioHealthUser');
+    const storedUser = localStorage.getItem('smartHealthcareUser');
+    // Check for old storage key for backward compatibility
+    const oldStoredUser = !storedUser ? localStorage.getItem('cardioHealthUser') : null;
+    
     if (storedUser) {
       try {
         setUser(JSON.parse(storedUser));
       } catch (e) {
         console.error("Error parsing stored user data:", e);
+        localStorage.removeItem('smartHealthcareUser');
+      }
+    } else if (oldStoredUser) {
+      // If found data in old key, migrate it to the new key
+      try {
+        const userData = JSON.parse(oldStoredUser);
+        setUser(userData);
+        localStorage.setItem('smartHealthcareUser', oldStoredUser);
+        localStorage.removeItem('cardioHealthUser');
+      } catch (e) {
+        console.error("Error migrating stored user data:", e);
         localStorage.removeItem('cardioHealthUser');
       }
     }
+    
     setLoading(false);
   }, []);
 
   // Handle user login
   const handleLogin = (userData) => {
     setUser(userData);
-    localStorage.setItem('cardioHealthUser', JSON.stringify(userData));
+    localStorage.setItem('smartHealthcareUser', JSON.stringify(userData));
     
     // Redirect to appropriate dashboard based on user role
     if (userData.role === 'doctor') {
@@ -35,6 +50,8 @@ const App = () => {
   // Handle user logout
   const handleLogout = () => {
     setUser(null);
+    localStorage.removeItem('smartHealthcareUser');
+    // Also remove old key for completeness
     localStorage.removeItem('cardioHealthUser');
     setCurrentPage('landing');
   };

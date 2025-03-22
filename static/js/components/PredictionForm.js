@@ -1,18 +1,60 @@
 // PredictionForm Component
 const PredictionForm = ({ user, navigateTo }) => {
   const [formData, setFormData] = React.useState({
+    // Basic Info
     userId: user.id,
     age: user.age || '',
     gender: user.gender || '',
     height: '',
     weight: '',
+    
+    // Category 1: Clinical Symptoms
+    chestPain: false,
+    shortnessOfBreath: false,
+    fatigue: false, 
+    palpitations: false,
+    dizziness: false,
+    swelling: false,
+    nausea: false,
+    coldSweats: false,
+    painJawNeckBack: false,
+    leftArmPain: false,
+    
+    // Category 2: Physiological and Medical Indicators
     systolicBp: '',
     diastolicBp: '',
     cholesterol: '1',
+    hdlCholesterol: '',
+    ldlCholesterol: '',
     glucose: '1',
+    heartRate: '',
+    waistHipRatio: '',
+    triglycerides: '',
+    cReactiveProtein: '',
+    
+    // Category 3: Lifestyle and Behavioral Risk Factors
     smoking: false,
     alcohol: false,
-    physicalActivity: true
+    physicalActivity: true,
+    highSaltDiet: false,
+    highFatDiet: false,
+    sleepHours: '',
+    stressLevel: '1',
+    workHours: '',
+    
+    // Category 4: Genetic and Family History
+    familyHistory: false,
+    geneticDisorders: false,
+    previousHeartProblems: false,
+    
+    // Category 5: Additional Risk Conditions
+    diabetes: false,
+    hypertension: false,
+    kidneyDisease: false,
+    thyroidDisorders: false,
+    anemia: false,
+    autoimmune: false,
+    metabolicSyndrome: false
   });
   
   const [loading, setLoading] = React.useState(false);
@@ -98,18 +140,60 @@ const PredictionForm = ({ user, navigateTo }) => {
   // Reset form and results
   const handleReset = () => {
     setFormData({
+      // Basic Info
       userId: user.id,
       age: user.age || '',
       gender: user.gender || '',
       height: '',
       weight: '',
+      
+      // Category 1: Clinical Symptoms
+      chestPain: false,
+      shortnessOfBreath: false,
+      fatigue: false, 
+      palpitations: false,
+      dizziness: false,
+      swelling: false,
+      nausea: false,
+      coldSweats: false,
+      painJawNeckBack: false,
+      leftArmPain: false,
+      
+      // Category 2: Physiological and Medical Indicators
       systolicBp: '',
       diastolicBp: '',
       cholesterol: '1',
+      hdlCholesterol: '',
+      ldlCholesterol: '',
       glucose: '1',
+      heartRate: '',
+      waistHipRatio: '',
+      triglycerides: '',
+      cReactiveProtein: '',
+      
+      // Category 3: Lifestyle and Behavioral Risk Factors
       smoking: false,
       alcohol: false,
-      physicalActivity: true
+      physicalActivity: true,
+      highSaltDiet: false,
+      highFatDiet: false,
+      sleepHours: '',
+      stressLevel: '1',
+      workHours: '',
+      
+      // Category 4: Genetic and Family History
+      familyHistory: false,
+      geneticDisorders: false,
+      previousHeartProblems: false,
+      
+      // Category 5: Additional Risk Conditions
+      diabetes: false,
+      hypertension: false,
+      kidneyDisease: false,
+      thyroidDisorders: false,
+      anemia: false,
+      autoimmune: false,
+      metabolicSyndrome: false
     });
     
     setPredictionResult(null);

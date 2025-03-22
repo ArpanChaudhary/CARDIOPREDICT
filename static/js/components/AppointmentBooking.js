@@ -7,6 +7,9 @@ const AppointmentBooking = ({ user, navigateTo }) => {
   const [selectedDate, setSelectedDate] = React.useState('');
   const [selectedTime, setSelectedTime] = React.useState('');
   const [reason, setReason] = React.useState('');
+  const [paymentMethod, setPaymentMethod] = React.useState('');
+  const [paymentAmount, setPaymentAmount] = React.useState(0);
+  const [showChatbot, setShowChatbot] = React.useState(false);
   const [loading, setLoading] = React.useState(true);
   const [submitting, setSubmitting] = React.useState(false);
   const [error, setError] = React.useState(null);
@@ -94,12 +97,55 @@ const AppointmentBooking = ({ user, navigateTo }) => {
     setSelectedTime('');
   };
   
+  // Handle doctor selection
+  const handleDoctorSelect = (doctorId) => {
+    const doctor = doctors.find(d => d.id === parseInt(doctorId));
+    setSelectedDoctor(doctor);
+    
+    if (doctor) {
+      setAvailableDays(doctor.available_days);
+      setAvailableHours(doctor.available_hours);
+      setSelectedDate('');
+      setSelectedTime('');
+      
+      // Set default payment amount based on doctor's experience
+      const experienceYears = parseInt(doctor.experience_years) || 0;
+      let basePrice = 50;
+      
+      if (experienceYears >= 10) {
+        basePrice = 100;
+      } else if (experienceYears >= 5) {
+        basePrice = 75;
+      }
+      
+      setPaymentAmount(basePrice);
+    } else {
+      setAvailableDays([]);
+      setAvailableHours([]);
+    }
+  };
+
+  // Handle payment method selection
+  const handlePaymentMethodSelect = (method) => {
+    setPaymentMethod(method);
+  };
+  
+  // Toggle chatbot visibility
+  const toggleChatbot = () => {
+    setShowChatbot(!showChatbot);
+  };
+
   // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
     
     if (!selectedDoctor || !selectedDate || !selectedTime) {
       setError('Please select a doctor, date, and time for your appointment');
+      return;
+    }
+    
+    if (!paymentMethod) {
+      setError('Please select a payment method');
       return;
     }
     
@@ -112,7 +158,11 @@ const AppointmentBooking = ({ user, navigateTo }) => {
         doctorId: selectedDoctor.id,
         appointmentDate: selectedDate,
         appointmentTime: selectedTime,
-        reason: reason
+        reason: reason,
+        paymentMethod: paymentMethod,
+        paymentAmount: paymentAmount,
+        paymentStatus: 'paid', // Assuming payment is processed immediately
+        paymentDate: new Date().toISOString()
       };
       
       const response = await axios.post('/api/appointments', appointmentData);
@@ -124,6 +174,7 @@ const AppointmentBooking = ({ user, navigateTo }) => {
       setSelectedDate('');
       setSelectedTime('');
       setReason('');
+      setPaymentMethod('');
       setAvailableDays([]);
       setAvailableHours([]);
     } catch (err) {
@@ -327,11 +378,48 @@ const AppointmentBooking = ({ user, navigateTo }) => {
                       <p className="mb-1">
                         <strong>Time:</strong> {selectedTime}
                       </p>
-                      <p className="mb-0">
+                      <p className="mb-1">
                         <strong>Reason:</strong> {reason || 'Not specified'}
+                      </p>
+                      <p className="mb-0">
+                        <strong>Fee:</strong> ${paymentAmount.toFixed(2)}
                       </p>
                     </div>
                   )}
+                  
+                  {/* Payment Method Selection */}
+                  {selectedDoctor && selectedDate && selectedTime && (
+                    <div className="mb-4">
+                      <PaymentModule 
+                        amount={paymentAmount}
+                        onSuccess={(paymentInfo) => {
+                          setPaymentMethod(paymentInfo.method);
+                          handleSubmit(new Event('submit'));
+                        }}
+                        onCancel={() => {
+                          setPaymentMethod('');
+                        }}
+                      />
+                    </div>
+                  )}
+                  
+                  {/* Health Assistant Chatbot */}
+                  <div className="mb-4">
+                    <button 
+                      type="button" 
+                      className="btn btn-outline-info w-100" 
+                      onClick={toggleChatbot}
+                    >
+                      <i className={`fas fa-${showChatbot ? 'minus' : 'plus'}-circle me-2`}></i>
+                      {showChatbot ? 'Hide' : 'Show'} Health Assistant
+                    </button>
+                    
+                    {showChatbot && (
+                      <div className="mt-3">
+                        <Chatbot />
+                      </div>
+                    )}
+                  </div>
                   
                   {/* Submit Button */}
                   <div className="d-grid gap-2 d-md-flex justify-content-md-end">
