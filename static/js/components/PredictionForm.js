@@ -463,6 +463,76 @@ const PredictionForm = ({ user, navigateTo }) => {
               {/* Assessment Form */}
               {!predictionResult && (
                 <form onSubmit={handleSubmit}>
+                  {/* Prediction Type Selector */}
+                  <div className="row mb-4">
+                    <div className="col-12">
+                      <h5 className="mb-3">Select Assessment Type</h5>
+                      <div className="d-flex flex-wrap gap-2">
+                        <button 
+                          type="button" 
+                          className={`btn ${predictionType === 'ai' ? 'btn-info' : 'btn-outline-info'}`}
+                          onClick={() => setPredictionType('ai')}
+                        >
+                          <i className="fas fa-robot me-2"></i>
+                          AI Comprehensive Assessment
+                        </button>
+                        <button 
+                          type="button" 
+                          className={`btn ${predictionType === 'clinical' ? 'btn-info' : 'btn-outline-info'}`}
+                          onClick={() => setPredictionType('clinical')}
+                        >
+                          <i className="fas fa-heartbeat me-2"></i>
+                          Clinical Symptoms
+                        </button>
+                        <button 
+                          type="button" 
+                          className={`btn ${predictionType === 'physiological' ? 'btn-info' : 'btn-outline-info'}`}
+                          onClick={() => setPredictionType('physiological')}
+                        >
+                          <i className="fas fa-stethoscope me-2"></i>
+                          Physiological Indicators
+                        </button>
+                        <button 
+                          type="button" 
+                          className={`btn ${predictionType === 'lifestyle' ? 'btn-info' : 'btn-outline-info'}`}
+                          onClick={() => setPredictionType('lifestyle')}
+                        >
+                          <i className="fas fa-running me-2"></i>
+                          Lifestyle Factors
+                        </button>
+                        <button 
+                          type="button" 
+                          className={`btn ${predictionType === 'genetic' ? 'btn-info' : 'btn-outline-info'}`}
+                          onClick={() => setPredictionType('genetic')}
+                        >
+                          <i className="fas fa-dna me-2"></i>
+                          Genetic History
+                        </button>
+                        <button 
+                          type="button" 
+                          className={`btn ${predictionType === 'additional' ? 'btn-info' : 'btn-outline-info'}`}
+                          onClick={() => setPredictionType('additional')}
+                        >
+                          <i className="fas fa-exclamation-triangle me-2"></i>
+                          Additional Risk Conditions
+                        </button>
+                      </div>
+                      <div className="mt-3 alert alert-info">
+                        <small>
+                          <i className="fas fa-info-circle me-2"></i>
+                          {predictionType === 'ai' ? 
+                            'AI Comprehensive Assessment evaluates all factors for the most accurate prediction.' : 
+                            `${predictionType === 'clinical' ? 'Clinical Symptoms' : 
+                              predictionType === 'physiological' ? 'Physiological Indicators' : 
+                              predictionType === 'lifestyle' ? 'Lifestyle Factors' : 
+                              predictionType === 'genetic' ? 'Genetic History' : 
+                              'Additional Risk Conditions'} assessment focuses only on specific risk factors.`
+                          }
+                        </small>
+                      </div>
+                    </div>
+                  </div>
+                
                   <div className="row mb-4">
                     <div className="col-12">
                       <h5 className="mb-3">Basic Information</h5>

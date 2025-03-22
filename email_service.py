@@ -1,6 +1,57 @@
-from flask_mail import Message
-from app import mail
+import os
+import sys
 import logging
+from sendgrid import SendGridAPIClient
+from sendgrid.helpers.mail import Mail, Email, To, Content
+
+# Get SendGrid API key from environment variables
+sendgrid_key = os.environ.get('SENDGRID_API_KEY')
+if not sendgrid_key:
+    logging.error("SENDGRID_API_KEY environment variable not set!")
+
+def send_email(to_email, subject, text_content):
+    """
+    Generic function to send an email using SendGrid
+    
+    Args:
+        to_email (str): Recipient email address
+        subject (str): Email subject
+        text_content (str): Email body content
+        
+    Returns:
+        bool: True if email sent successfully, False otherwise
+    """
+    if not sendgrid_key:
+        logging.error("Cannot send email: SendGrid API key is missing")
+        return False
+        
+    try:
+        # Create SendGrid client
+        sg = SendGridAPIClient(sendgrid_key)
+        
+        # Set up the email
+        from_email = Email("healthsystem@example.com")  # Change this to your verified sender
+        to_email = To(to_email)
+        content = Content("text/plain", text_content)
+        
+        mail = Mail(from_email, to_email, subject, content)
+        
+        # Send the email
+        response = sg.client.mail.send.post(request_body=mail.get())
+        
+        # Log the response
+        logging.info(f"Email sent to {to_email.email}. Status code: {response.status_code}")
+        
+        # Check if successful
+        if response.status_code >= 200 and response.status_code < 300:
+            return True
+        else:
+            logging.error(f"Failed to send email. Status code: {response.status_code}")
+            return False
+            
+    except Exception as e:
+        logging.error(f"SendGrid error: {str(e)}")
+        return False
 
 def send_appointment_confirmation_email(recipient, appointment_details):
     """
@@ -11,6 +62,9 @@ def send_appointment_confirmation_email(recipient, appointment_details):
         appointment_details (dict): Dictionary containing appointment details
     """
     try:
+        logging.info(f"Preparing to send confirmation email to {recipient}")
+        logging.debug(f"Appointment details: {appointment_details}")
+        
         # Get priority-specific information
         priority_text = ""
         if 'priority' in appointment_details:
@@ -36,46 +90,46 @@ def send_appointment_confirmation_email(recipient, appointment_details):
 
         subject = "Appointment Confirmation - Smart Healthcare Ecosystem"
         body = f"""
-        Dear {appointment_details['patient_name']},
-        
-        Your appointment with Dr. {appointment_details['doctor_name']} ({appointment_details['specialization']}) has been confirmed.
-        
-        Appointment Details:
-        Date: {appointment_details['date']}
-        Time: {appointment_details['time']}
-        Reason: {appointment_details['reason']}{priority_text}{follow_up_text}{notes_text}{records_text}
-        
-        Location: Smart Healthcare Center
-        
-        Preparation Instructions:
-        - Arrive 15 minutes early to complete any necessary paperwork
-        - Bring a list of current medications and dosages
-        - Bring your insurance card and ID
-        - Fast for 8 hours prior to appointment if lab work might be needed
-        - Wear comfortable clothing that allows easy examination
-        
-        If you need to reschedule or cancel, please log in to your account or contact us.
-        
-        We've added this appointment to your personal health calendar in your user dashboard.
-        
-        Thank you for choosing Smart Healthcare Ecosystem!
-        
-        Best regards,
-        The Smart Healthcare Team
+Dear {appointment_details['patient_name']},
+
+Your appointment with Dr. {appointment_details['doctor_name']} ({appointment_details['specialization']}) has been confirmed.
+
+Appointment Details:
+Date: {appointment_details['date']}
+Time: {appointment_details['time']}
+Reason: {appointment_details['reason']}{priority_text}{follow_up_text}{notes_text}{records_text}
+
+Location: Smart Healthcare Center
+
+Preparation Instructions:
+- Arrive 15 minutes early to complete any necessary paperwork
+- Bring a list of current medications and dosages
+- Bring your insurance card and ID
+- Fast for 8 hours prior to appointment if lab work might be needed
+- Wear comfortable clothing that allows easy examination
+
+If you need to reschedule or cancel, please log in to your account or contact us.
+
+We've added this appointment to your personal health calendar in your user dashboard.
+
+Thank you for choosing Smart Healthcare Ecosystem!
+
+Best regards,
+The Smart Healthcare Team
         """
         
-        msg = Message(
-            subject=subject,
-            recipients=[recipient],
-            body=body
-        )
+        # Use the generic send_email function
+        email_sent = send_email(recipient, subject, body)
         
-        mail.send(msg)
-        logging.info(f"Appointment confirmation email sent to {recipient}")
-        return True
+        if email_sent:
+            logging.info(f"Appointment confirmation email sent to {recipient}")
+            return True
+        else:
+            logging.error(f"Failed to send appointment confirmation email to {recipient}")
+            return False
     
     except Exception as e:
-        logging.error(f"Failed to send appointment confirmation email: {str(e)}")
+        logging.error(f"Exception in send_appointment_confirmation_email: {str(e)}")
         return False
 
 def send_appointment_reminder_email(recipient, appointment_details):
@@ -87,49 +141,51 @@ def send_appointment_reminder_email(recipient, appointment_details):
         appointment_details (dict): Dictionary containing appointment details
     """
     try:
+        logging.info(f"Preparing to send reminder email to {recipient}")
+        
         subject = "Appointment Reminder - Smart Healthcare Ecosystem"
         body = f"""
-        Dear {appointment_details['patient_name']},
-        
-        This is a friendly reminder for your upcoming appointment with Dr. {appointment_details['doctor_name']} ({appointment_details['specialization']}).
-        
-        Appointment Details:
-        Date: {appointment_details['date']}
-        Time: {appointment_details['time']}
-        Reason: {appointment_details.get('reason', 'Not specified')}
-        
-        Location: Smart Healthcare Center
-        
-        Pre-appointment checklist:
-        - Please bring any previous medical records related to your condition
-        - Bring a list of current medications
-        - Have your ID and insurance card ready (if applicable)
-        - Complete any pre-appointment forms in your patient portal
-        - Fast for 8 hours if your appointment includes lab work
-        
-        Please arrive 15 minutes before your scheduled appointment time.
-        If you need to reschedule or cancel, please log in to your account or contact us at least 24 hours in advance.
-        
-        You can use our mobile app to get directions to our center and check in digitally when you arrive.
-        
-        Thank you for choosing Smart Healthcare Ecosystem!
-        
-        Best regards,
-        The Smart Healthcare Team
+Dear {appointment_details['patient_name']},
+
+This is a friendly reminder for your upcoming appointment with Dr. {appointment_details['doctor_name']} ({appointment_details['specialization']}).
+
+Appointment Details:
+Date: {appointment_details['date']}
+Time: {appointment_details['time']}
+Reason: {appointment_details.get('reason', 'Not specified')}
+
+Location: Smart Healthcare Center
+
+Pre-appointment checklist:
+- Please bring any previous medical records related to your condition
+- Bring a list of current medications
+- Have your ID and insurance card ready (if applicable)
+- Complete any pre-appointment forms in your patient portal
+- Fast for 8 hours if your appointment includes lab work
+
+Please arrive 15 minutes before your scheduled appointment time.
+If you need to reschedule or cancel, please log in to your account or contact us at least 24 hours in advance.
+
+You can use our mobile app to get directions to our center and check in digitally when you arrive.
+
+Thank you for choosing Smart Healthcare Ecosystem!
+
+Best regards,
+The Smart Healthcare Team
         """
         
-        msg = Message(
-            subject=subject,
-            recipients=[recipient],
-            body=body
-        )
+        # Use the generic send_email function
+        email_sent = send_email(recipient, subject, body)
         
-        mail.send(msg)
-        logging.info(f"Appointment reminder email sent to {recipient}")
-        return True
+        if email_sent:
+            logging.info(f"Appointment reminder email sent to {recipient}")
+            return True
+        else:
+            logging.error(f"Failed to send appointment reminder email to {recipient}")
+            return False
     
     except Exception as e:
-        logging.error(f"Failed to send appointment reminder email: {str(e)}")
+        logging.error(f"Exception in send_appointment_reminder_email: {str(e)}")
         return False
 
 def send_prediction_result_email(recipient, prediction_details):
