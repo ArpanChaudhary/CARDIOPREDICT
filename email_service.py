@@ -197,56 +197,58 @@ def send_prediction_result_email(recipient, prediction_details):
         prediction_details (dict): Dictionary containing prediction details
     """
     try:
+        logging.info(f"Preparing to send prediction result email to {recipient}")
+        
         subject = "Your Smart Healthcare Cardiovascular Risk Assessment Results"
         
         risk_level = "High" if prediction_details['prediction_label'] else "Low"
         risk_percentage = f"{prediction_details['prediction_result'] * 100:.1f}%"
         
         body = f"""
-        Dear {prediction_details['patient_name']},
-        
-        Thank you for using our Smart Healthcare Ecosystem Prediction Service. Below are your cardiovascular risk assessment results:
-        
-        ✱ Risk Assessment: {risk_level} Risk
-        ✱ Risk Percentage: {risk_percentage}
-        
-        {get_recommendation_text(prediction_details)}
-        
-        Next Steps:
-        1. Schedule a consultation with one of our cardiologists to discuss your results
-        2. Download our mobile app to track your health metrics daily
-        3. Join our online support community for heart health tips and discussions
-        4. Consider enrolling in our heart health wellness program
-        
-        Important Health Metrics to Monitor:
-        - Blood Pressure: Target below 120/80 mmHg
-        - Total Cholesterol: Target below 200 mg/dL
-        - Resting Heart Rate: Target 60-100 BPM
-        - BMI: Target 18.5-24.9
-        
-        Please note that this is an AI-based prediction and not a medical diagnosis. 
-        We recommend consulting with a healthcare professional for a comprehensive evaluation.
-        
-        You can view your complete results and history by logging into your account dashboard.
-        
-        Stay healthy!
-        
-        Best regards,
-        The Smart Healthcare Team
+Dear {prediction_details['patient_name']},
+
+Thank you for using our Smart Healthcare Ecosystem Prediction Service. Below are your cardiovascular risk assessment results:
+
+✱ Risk Assessment: {risk_level} Risk
+✱ Risk Percentage: {risk_percentage}
+
+{get_recommendation_text(prediction_details)}
+
+Next Steps:
+1. Schedule a consultation with one of our cardiologists to discuss your results
+2. Download our mobile app to track your health metrics daily
+3. Join our online support community for heart health tips and discussions
+4. Consider enrolling in our heart health wellness program
+
+Important Health Metrics to Monitor:
+- Blood Pressure: Target below 120/80 mmHg
+- Total Cholesterol: Target below 200 mg/dL
+- Resting Heart Rate: Target 60-100 BPM
+- BMI: Target 18.5-24.9
+
+Please note that this is an AI-based prediction and not a medical diagnosis. 
+We recommend consulting with a healthcare professional for a comprehensive evaluation.
+
+You can view your complete results and history by logging into your account dashboard.
+
+Stay healthy!
+
+Best regards,
+The Smart Healthcare Team
         """
         
-        msg = Message(
-            subject=subject,
-            recipients=[recipient],
-            body=body
-        )
+        # Use the generic send_email function
+        email_sent = send_email(recipient, subject, body)
         
-        mail.send(msg)
-        logging.info(f"Prediction result email sent to {recipient}")
-        return True
+        if email_sent:
+            logging.info(f"Prediction result email sent to {recipient}")
+            return True
+        else:
+            logging.error(f"Failed to send prediction result email to {recipient}")
+            return False
     
     except Exception as e:
-        logging.error(f"Failed to send prediction result email: {str(e)}")
+        logging.error(f"Exception in send_prediction_result_email: {str(e)}")
         return False
 
 def get_recommendation_text(prediction_details):
