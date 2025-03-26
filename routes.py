@@ -1,12 +1,12 @@
 from flask import jsonify, request, render_template
-from app import app, db, mail
+from app import app, db
 from models import User, Doctor, Prediction, Appointment
-from flask_mail import Message
 from ml_model import predict_cardio_disease
 import logging
 from datetime import datetime
 from werkzeug.security import generate_password_hash
 import json
+from email_service import send_email
 
 # Serve main React app
 @app.route('/')
@@ -219,13 +219,7 @@ def create_appointment():
         # Use the email service function with improved logging
         try:
             logging.info(f"Attempting to send confirmation email to {user.email}")
-            from email_service import send_appointment_confirmation_email
-            email_sent = send_appointment_confirmation_email(user.email, appointment_details)
-            
-            if email_sent:
-                logging.info(f"Email sent successfully to {user.email}")
-            else:
-                logging.error(f"Email failed to send to {user.email}, but appointment was created")
+            send_appointment_confirmation(user.email, user.full_name, doctor_user.full_name, doctor_model.specialization, appointment.appointment_date, appointment.appointment_time)
         except Exception as email_error:
             logging.error(f"Exception when sending email: {str(email_error)}")
             # Don't fail the appointment creation if email fails
@@ -312,12 +306,8 @@ def send_appointment_confirmation(recipient_email, patient_name, doctor_name, sp
         CardioCare Team
         """
         
-        msg = Message(
-            subject=subject,
-            recipients=[recipient_email],
-            body=body
-        )
-        
-        mail.send(msg)
+        success = send_email(recipient_email, subject, body)
+        if not success:
+            logging.error(f"Failed to send appointment confirmation email to {recipient_email}")
     except Exception as e:
         logging.error(f"Failed to send email: {str(e)}")

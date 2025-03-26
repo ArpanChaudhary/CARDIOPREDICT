@@ -238,6 +238,171 @@ const UserDashboard = ({ user, navigateTo }) => {
         }
       });
     }
+    
+    // Initialize BMI Chart
+    if (sortedPredictions.length > 0 && document.getElementById('bmiChart')) {
+      const bmiLabels = sortedPredictions.map(p => {
+        const date = new Date(p.created_at);
+        return `${date.getMonth() + 1}/${date.getDate()}/${date.getFullYear()}`;
+      });
+      
+      // Calculate BMI values
+      const bmiData = sortedPredictions.map(p => {
+        const heightM = p.height / 100; // Convert cm to meters
+        return (p.weight / (heightM * heightM)).toFixed(1); // BMI formula: weight(kg) / height(m)²
+      });
+      
+      // BMI Categories for backgrounds
+      const bmiBackgrounds = bmiData.map(bmi => {
+        const numBmi = parseFloat(bmi);
+        if (numBmi < 18.5) return 'rgba(54, 162, 235, 0.7)'; // Underweight - blue
+        if (numBmi < 25) return 'rgba(75, 192, 75, 0.7)';    // Normal - green
+        if (numBmi < 30) return 'rgba(255, 206, 86, 0.7)';   // Overweight - yellow
+        return 'rgba(255, 99, 132, 0.7)';                   // Obese - red
+      });
+      
+      if (bmiChart) {
+        bmiChart.destroy();
+      }
+      
+      const ctxBmi = document.getElementById('bmiChart').getContext('2d');
+      bmiChart = new Chart(ctxBmi, {
+        type: 'bar',
+        data: {
+          labels: bmiLabels,
+          datasets: [{
+            label: 'BMI',
+            data: bmiData,
+            backgroundColor: bmiBackgrounds,
+            borderColor: bmiBackgrounds.map(c => c.replace('0.7', '1')),
+            borderWidth: 1
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          scales: {
+            y: {
+              beginAtZero: false,
+              min: Math.max(0, Math.min(...bmiData.map(b => parseFloat(b))) - 5),
+              max: Math.max(...bmiData.map(b => parseFloat(b))) + 5,
+              title: {
+                display: true,
+                text: 'BMI Value'
+              }
+            },
+            x: {
+              title: {
+                display: true,
+                text: 'Date'
+              }
+            }
+          },
+          plugins: {
+            tooltip: {
+              callbacks: {
+                label: function(context) {
+                  const bmi = parseFloat(context.parsed.y);
+                  let status = '';
+                  
+                  if (bmi < 18.5) status = 'Underweight';
+                  else if (bmi < 25) status = 'Normal';
+                  else if (bmi < 30) status = 'Overweight';
+                  else status = 'Obese';
+                  
+                  return `BMI: ${bmi} (${status})`;
+                }
+              }
+            }
+          }
+        }
+      });
+    }
+    
+    // Initialize Lifestyle Impact Chart
+    if (sortedPredictions.length > 0 && document.getElementById('lifestyleChart')) {
+      // Count lifestyle factors from all predictions
+      const lifestyleFactors = {
+        diet: 0,
+        exercise: 0,
+        smoking: 0,
+        sleep: 0
+      };
+      
+      // Calculate contribution of each factor
+      sortedPredictions.forEach(prediction => {
+        if (prediction.high_fat_diet || prediction.high_salt_diet) {
+          lifestyleFactors.diet += 1;
+        }
+        
+        if (!prediction.physical_activity) {
+          lifestyleFactors.exercise += 1;
+        }
+        
+        if (prediction.smoking) {
+          lifestyleFactors.smoking += 1;
+        }
+        
+        if (prediction.sleep_hours && prediction.sleep_hours < 7) {
+          lifestyleFactors.sleep += 1;
+        }
+      });
+      
+      // Create dataset
+      const lifestyleData = [
+        lifestyleFactors.diet,
+        lifestyleFactors.exercise,
+        lifestyleFactors.smoking,
+        lifestyleFactors.sleep
+      ];
+      
+      if (lifestyleChart) {
+        lifestyleChart.destroy();
+      }
+      
+      const ctxLifestyle = document.getElementById('lifestyleChart').getContext('2d');
+      lifestyleChart = new Chart(ctxLifestyle, {
+        type: 'doughnut',
+        data: {
+          labels: ['Poor Diet', 'Lack of Exercise', 'Smoking', 'Poor Sleep'],
+          datasets: [{
+            data: lifestyleData,
+            backgroundColor: [
+              '#36a2eb',  // Diet - blue
+              '#ff6384',  // Exercise - pink
+              '#4bc0c0',  // Smoking - teal
+              '#ff9f40'   // Sleep - orange
+            ],
+            borderColor: [
+              '#36a2eb',
+              '#ff6384',
+              '#4bc0c0',
+              '#ff9f40'
+            ],
+            borderWidth: 1
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: {
+              position: 'bottom'
+            },
+            tooltip: {
+              callbacks: {
+                label: function(context) {
+                  const value = context.parsed;
+                  const total = lifestyleData.reduce((a, b) => a + b, 0);
+                  const percentage = total > 0 ? Math.round((value / total) * 100) : 0;
+                  return `${context.label}: ${percentage}% impact`;
+                }
+              }
+            }
+          }
+        }
+      });
+    }
   };
 
   // Format date for display
